@@ -1,4 +1,6 @@
-﻿namespace DaoLang.Attributes
+﻿using System;
+
+namespace DaoLang.Attributes
 {
     /// <summary>
     /// 词条标记

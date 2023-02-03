@@ -3,15 +3,14 @@
   <PropertyGroup>
     <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <HasSharedItems>true</HasSharedItems>
-    <SharedGUID>cf6a33b8-fe57-43a5-ae4d-f530c2903828</SharedGUID>
+    <SharedGUID>fbf02eb9-39e0-4d45-b76a-58eec2bd7a5d</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>DaoLang.Shared</Import_RootNamespace>
+    <Import_RootNamespace>DaoLang.Base</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Enums\LanguageType.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\EnumEx.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Models\Language.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Utils\SourceReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\EntryAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Attributes\LanguageAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LanguageResource.cs" />
   </ItemGroup>
 </Project>

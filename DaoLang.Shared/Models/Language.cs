@@ -1,5 +1,9 @@
-﻿using DaoLang.Shared.Enums;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using DaoLang.Shared.Enums;
 using System.Xml.Serialization;
+using System.Windows;
 
 namespace DaoLang.Shared.Models
 {
@@ -124,6 +128,26 @@ namespace DaoLang.Shared.Models
         }
 
         public override int GetHashCode() => this.Items.GetHashCode() + this.LanguageType.GetHashCode() + this.IsMainLanguage.GetHashCode();
+
+#if WPF
+        public ResourceDictionary ConvertToResourceDictionary( Language backup = null)
+        {
+            var result = new ResourceDictionary();
+            Items?.ForEach(t =>
+            {
+                // 当词条内容为空时使用备份语言词条内容作为替补
+                if (string.IsNullOrEmpty(t.Content) && backup != null)
+                {
+                    result.Add(t.Key, backup[t.Key].Content);
+                }
+                else
+                {
+                    result.Add(t.Key, t.Content);
+                }
+            });
+            return result;
+        }
+#endif
         #endregion
     }
 
@@ -137,11 +161,11 @@ namespace DaoLang.Shared.Models
         /// 资源Key
         /// </summary>
         [XmlAttribute]
-        public string Key { get; set; } = null!;
+        public string Key { get; set; }
         /// <summary>
         /// 内容
         /// </summary>
         [XmlAttribute]
-        public string Content { get; set; } = null!;
+        public string Content { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using DaoLang.Shared.Component.Enums;
+﻿using System;
+using DaoLang.Shared.Enums;
 
 namespace DaoLang.Attributes
 {
