@@ -145,8 +145,8 @@ namespace DaoLang.SourceGenerators
                 secondaryStr = secondaries.Aggregate(
                     secondaryStr,
                     (current, minor)
-                        => current + $"{CodePart.Tab(4)}LanguageType.{(LanguageType)(minor.ConstructorArguments[0].Value ?? 0)},{CodePart.Enter}");
-                secondaryStr += $"{CodePart.Tab(3)}}};";
+                        => current + $"{CodePart.Tabs(4)}LanguageType.{(LanguageType)(minor.ConstructorArguments[0].Value ?? 0)},{CodePart.Enter}");
+                secondaryStr += $"{CodePart.Tabs(3)}}};";
             }
 
             // 函数主体

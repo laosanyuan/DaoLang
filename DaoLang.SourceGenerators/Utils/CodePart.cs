@@ -13,14 +13,14 @@ namespace DaoLang.SourceGenerators.Utils
         /// <summary>
         /// 缩进
         /// </summary>
-        public const string TAB = "    ";
+        public const string Tab = "    ";
 
         /// <summary>
         /// 缩进
         /// </summary>
         /// <param name="n">tab数量</param>
         /// <returns>4n个space</returns>
-        public static string Tab(int count) => MultiStr(TAB, count);
+        public static string Tabs(int count) => MultiStr(Tab, count);
 
         /// <summary>
         /// 生成多个标记字符串

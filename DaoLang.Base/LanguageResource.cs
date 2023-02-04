@@ -17,27 +17,27 @@ namespace DaoLang
         /// <summary>
         /// 资源类类型
         /// </summary>
-        protected static Type _sourceType;
+        protected static Type SourceType;
         /// <summary>
         /// 资源文件文件夹路径
         /// </summary>
-        protected static string _folder;
+        protected static string Folder;
         /// <summary>
         /// 文件标识名称
         /// </summary>
-        protected static string _fileFlag;
+        protected static string FileFlag;
         /// <summary>
         /// 主语言
         /// </summary>
-        protected static LanguageType _mainLanguage;
+        protected static LanguageType MainLanguage;
         /// <summary>
         /// 副语言集合
         /// </summary>
-        protected static LanguageType[] _secondaryLanguages;
+        protected static LanguageType[] SecondaryLanguages;
         /// <summary>
         /// 主语言资源
         /// </summary>
-        protected static Language _mainSource;
+        protected static Language MainSource;
         #endregion
 
         #region [Events]
@@ -56,9 +56,9 @@ namespace DaoLang
         /// <returns></returns>
         public static bool SetLanguage(LanguageType language)
         {
-            if (_secondaryLanguages?.Contains(language) == true)
+            if (SecondaryLanguages?.Contains(language) == true)
             {
-                _mainSource ??= PropertyToSource(_mainLanguage);
+                MainSource ??= PropertyToSource(MainLanguage);
                 LoadLanguageSource(language);
             }
             else
@@ -71,7 +71,7 @@ namespace DaoLang
         /// <summary>
         /// 设置为主语言
         /// </summary>
-        public static void SetMainLanguage() => LoadLanguageSource(_mainLanguage);
+        public static void SetMainLanguage() => LoadLanguageSource(MainLanguage);
         #endregion
 
         #region [Private Methods]
@@ -98,7 +98,7 @@ namespace DaoLang
         /// <returns></returns>
         protected static string GetSourceFileName(LanguageType languageType)
         {
-            var fileName = Path.Combine(_folder, $"{_fileFlag}.{languageType.GetCommonName()}.xml");
+            var fileName = Path.Combine(Folder, $"{FileFlag}.{languageType.GetCommonName()}.xml");
             return Path.Combine(Environment.CurrentDirectory, fileName);
         }
 
@@ -113,7 +113,7 @@ namespace DaoLang
                 return;
             }
 
-            foreach (var field in _sourceType.GetFields(BindingFlags.Static | BindingFlags.NonPublic))
+            foreach (var field in SourceType.GetFields(BindingFlags.Static | BindingFlags.NonPublic))
             {
                 var propertyName = GetPropertyName(field.Name);
                 if (language.TryGetValue(propertyName, out var sentence) && typeof(string) == field.FieldType)
@@ -121,11 +121,11 @@ namespace DaoLang
                     // 当前资源没有设置词条时，使用主语言资源词条
                     if (!string.IsNullOrEmpty(sentence.Content))
                     {
-                        field.SetValue(_sourceType, sentence.Content);
+                        field.SetValue(SourceType, sentence.Content);
                     }
-                    else if (_mainSource?.TryGetValue(propertyName, out var mainEntry) == true)
+                    else if (MainSource?.TryGetValue(propertyName, out var mainEntry) == true)
                     {
-                        field.SetValue(_sourceType, mainEntry.Content);
+                        field.SetValue(SourceType, mainEntry.Content);
                     }
                 }
             }
@@ -140,9 +140,9 @@ namespace DaoLang
         {
             Language language = new() { LanguageType = languageType };
 
-            foreach (var property in _sourceType.GetProperties())
+            foreach (var property in SourceType.GetProperties())
             {
-                var content = languageType == _mainLanguage ? property.GetValue(_sourceType) as string : string.Empty;
+                var content = languageType == MainLanguage ? property.GetValue(SourceType) as string : string.Empty;
                 language.Add(new LanguageItem() { Key = property.Name, Content = content });
             }
 
@@ -164,7 +164,7 @@ namespace DaoLang
                 LanguageChanged?.Invoke(new LanguageEventArgs()
                 {
                     LanguageType = language.LanguageType,
-                    ResourceDictionary = language.ConvertToResourceDictionary(_mainSource)
+                    ResourceDictionary = language.ConvertToResourceDictionary(MainSource)
                 });
                 return true;
             }

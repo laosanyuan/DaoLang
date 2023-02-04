@@ -1,9 +1,9 @@
-﻿using System;
+﻿using DaoLang.Shared.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using DaoLang.Shared.Enums;
-using System.Xml.Serialization;
 using System.Windows;
+using System.Xml.Serialization;
 
 namespace DaoLang.Shared.Models
 {
@@ -24,7 +24,7 @@ namespace DaoLang.Shared.Models
         /// <summary>
         /// 词条集合
         /// </summary>
-        public List<LanguageItem> Items { get; set; } = new();
+        public List<LanguageItem> Items { get; set; } = new List<LanguageItem>();
         #endregion
 
         #region [Methods]
@@ -68,8 +68,8 @@ namespace DaoLang.Shared.Models
         /// <returns></returns>
         public LanguageItem this[string key]
             => ContainsKey(key)
-                ? this.Items.FirstOrDefault(t => t.Key.Equals(key))!
-                : default!;
+                ? this.Items.FirstOrDefault(t => t.Key.Equals(key))
+                : default;
 
         /// <summary>
         /// 添加词条
@@ -85,11 +85,11 @@ namespace DaoLang.Shared.Models
         /// <returns></returns>
         public bool TryGetValue(string key, out LanguageItem entry)
         {
-            entry = default!;
+            entry = default;
 
             if (!string.IsNullOrEmpty(key) && Items.Any(t => t.Key.Equals(key)))
             {
-                entry = Items.FirstOrDefault(t => t.Key.Equals(key))!;
+                entry = Items.FirstOrDefault(t => t.Key.Equals(key));
                 return true;
             }
 
@@ -106,7 +106,7 @@ namespace DaoLang.Shared.Models
             return !string.IsNullOrEmpty(key) && Items.Any(t => t.Key.Equals(key));
         }
 
-        public override bool Equals(object? obj)
+        public override bool Equals(object obj)
         {
             if (obj is Language target
                 && target.LanguageType == this.LanguageType

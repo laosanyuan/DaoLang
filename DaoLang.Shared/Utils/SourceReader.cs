@@ -24,7 +24,7 @@ namespace DaoLang.Shared.Utils
 
         public static bool Load(string fileName, out Language language)
         {
-            language = default!;
+            language = default;
 
             if (File.Exists(fileName))
             {
@@ -67,23 +67,30 @@ namespace DaoLang.Shared.Utils
             }
 
             var serializer = new XmlSerializer(typeof(Language));
-            using var sw = new StringWriter();
-            using var writer = new XmlTextWriter(sw);
-            writer.Indentation = 2;
-            writer.Formatting = Formatting.Indented;
-            serializer.Serialize(writer, source);
-            var xmlStr = sw.ToString();
-
-            if (!File.Exists(filePath))
+            using (var sw = new StringWriter())
             {
-                var path = Path.GetDirectoryName(filePath);
-                if (!Directory.Exists(path))
+
+                using (var writer = new XmlTextWriter(sw))
                 {
-                    Directory.CreateDirectory(path);
+
+
+                    writer.Indentation = 2;
+                    writer.Formatting = Formatting.Indented;
+                    serializer.Serialize(writer, source);
+                    var xmlStr = sw.ToString();
+
+                    if (!File.Exists(filePath))
+                    {
+                        var path = Path.GetDirectoryName(filePath);
+                        if (!Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+                    }
+
+                    File.WriteAllText(filePath, xmlStr, Encoding.UTF8);
                 }
             }
-
-            File.WriteAllText(filePath, xmlStr, Encoding.UTF8);
         }
     }
 }

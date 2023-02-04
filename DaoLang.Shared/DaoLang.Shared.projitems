@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Enums\LanguageType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\DictionaryEx.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\EnumEx.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Language.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\SourceReader.cs" />
