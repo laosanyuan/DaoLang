@@ -22,10 +22,6 @@ namespace DaoLang.SourceGenerators
         /// 词条标记特性
         /// </summary>
         private const string EntryAttributeName = "DaoLang.Attributes.EntryAttribute";
-        /// <summary>
-        /// 词条内容缓存
-        /// </summary>
-        private static readonly Dictionary<string, string> EntryCache = new();
 
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
@@ -73,7 +69,6 @@ namespace DaoLang.SourceGenerators
         /// </summary>
         private static void Execute(Compilation compilation, ImmutableArray<TypeDeclarationSyntax> types, SourceProductionContext context)
         {
-            Debugger.Launch();
             if (types.IsDefaultOrEmpty)
             {
                 return;
@@ -112,28 +107,12 @@ namespace DaoLang.SourceGenerators
 
                 foreach (var usedAttribute in usedAttributes)
                 {
-                    if (GenerateLanguageClass(typeDeclarationSyntax, typeSymbol, usedAttribute.Value) is not
-                        { } source)
+                    if (GenerateLanguageClass(typeDeclarationSyntax, typeSymbol, usedAttribute.Value) is { } source)
                     {
-                        continue;
+                        context.AddSource(
+                            $"{typeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted))}.g.cs",
+                            source);
                     }
-                    var name = typeSymbol.ToDisplayString();
-                    if (EntryCache.ContainsKey(name))
-                    {
-                        if (EntryCache[name].Equals(source))
-                        {
-                            return;
-                        }
-                        EntryCache[name] = source;
-                    }
-                    else
-                    {
-                        EntryCache.Add(name, source);
-                    }
-
-                    context.AddSource(
-                        $"{typeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted))}.g.cs",
-                        source);
                 }
             }
         }

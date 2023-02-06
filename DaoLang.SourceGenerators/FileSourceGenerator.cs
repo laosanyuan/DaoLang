@@ -29,19 +29,7 @@ namespace DaoLang.SourceGenerators
         /// 副语言标记特性
         /// </summary>
         private const string SecondaryLanguageAttributeName = "DaoLang.Attributes.SecondaryLanguageAttribute";
-        private static readonly Delayer _delayer;
-        private static Compilation _lastCompilation;
-        private static ImmutableArray<TypeDeclarationSyntax> _lastTypeDeclarationSyntaxes;
-        private static readonly Dictionary<string, Dictionary<string, string>> ClassCacheDic = new();
-        private static readonly Dictionary<string, List<LanguageType>> LanguageCacheDic = new();
-        private static readonly object SyncFields = new();
         #endregion
-
-        static FileSourceGenerator()
-        {
-            _delayer = new Delayer(3000);
-            _delayer.DelayerExpired += DelayerExpired;
-        }
 
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
@@ -54,26 +42,11 @@ namespace DaoLang.SourceGenerators
             IncrementalValueProvider<(Compilation Compilation, ImmutableArray<TypeDeclarationSyntax> TypeDeclarationSyntaxes)> compilationAndTypes =
                 context.CompilationProvider.Combine(typeDeclarations.Collect());
 
-            context.RegisterSourceOutput(compilationAndTypes, (spc, source) =>
-            {
-                _lastCompilation = source.Compilation;
-                _lastTypeDeclarationSyntaxes = source.TypeDeclarationSyntaxes;
-                _delayer.SetDelayer();
-            });
+            context.RegisterSourceOutput(compilationAndTypes, static (spc, source) =>
+                Execute(source.Compilation, source.TypeDeclarationSyntaxes));
         }
 
         #region [Private Methods]
-        /// <summary>
-        /// 延时触发执行
-        /// </summary>
-        private static void DelayerExpired()
-        {
-            lock (SyncFields)
-            {
-                Execute(_lastCompilation, _lastTypeDeclarationSyntaxes);
-            }
-        }
-
         /// <summary>
         /// 获取TypeDeclarationSyntax
         /// </summary>
@@ -219,29 +192,6 @@ namespace DaoLang.SourceGenerators
                 }
             }
 
-            // 判断是否需要重新生成文件
-            if (ClassCacheDic.ContainsKey(key))
-            {
-                if (valueDic.IsSame(ClassCacheDic[key]))
-                {
-                    // 字段集合未发生变化，不重新生成文件
-                    return;
-                }
-
-                if (valueDic.IsKeySame(ClassCacheDic[key]))
-                {
-                    ClassCacheDic[key] = valueDic;
-                    // 字段默认值发生了变化，仅更新主语言
-                    UpdateLanguageFiles(typeSymbol, type, directory, fileFlag, csprojFile, valueDic, true);
-                    return;
-                }
-                ClassCacheDic[key] = valueDic;
-            }
-            else
-            {
-                ClassCacheDic.Add(key, valueDic);
-            }
-
             // 更新全部文件
             UpdateLanguageFiles(typeSymbol, type, directory, fileFlag, csprojFile, valueDic);
         }
@@ -280,11 +230,6 @@ namespace DaoLang.SourceGenerators
 
                 var sourceName = SourceReader.GetFileName(directory, fileFlag, type);
 
-                if (LanguageCacheDic.ContainsKey(key) && LanguageCacheDic[key].Contains(type))
-                {
-                    continue;
-                }
-
                 sources.Add(sourceName);
                 // 生成新添加的副语言文件
                 GeneratorFile(
@@ -295,8 +240,6 @@ namespace DaoLang.SourceGenerators
 
             if (sources.Count > 0)
             {
-                // 缓存现有语言种类
-                UpdateLanguagesCache(key, languages);
                 // 更新.csproj文件
                 CsprojUtil.AddFileToOutput(csprojFile, sources);
             }
@@ -358,8 +301,6 @@ namespace DaoLang.SourceGenerators
                     type);
             }
 
-            // 缓存现有语言种类
-            UpdateLanguagesCache(key, languages);
             // 更新.csproj文件
             CsprojUtil.AddFileToOutput(csprojFile, sources);
         }
@@ -413,23 +354,6 @@ namespace DaoLang.SourceGenerators
             }
 
             SourceReader.Save(result, fileName);
-        }
-
-        /// <summary>
-        /// 更新语言资源种类缓存
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="languages"></param>
-        private static void UpdateLanguagesCache(string key, List<LanguageType> languages)
-        {
-            if (LanguageCacheDic.ContainsKey(key))
-            {
-                LanguageCacheDic[key] = languages;
-            }
-            else
-            {
-                LanguageCacheDic.Add(key, languages);
-            }
         }
         #endregion
     }

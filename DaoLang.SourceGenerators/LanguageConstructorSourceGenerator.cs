@@ -23,15 +23,13 @@ namespace DaoLang.SourceGenerators
         /// </summary>
         private const string SecondaryLanguageAttributeName = "DaoLang.Attributes.SecondaryLanguageAttribute";
 
-        private static readonly Dictionary<string, string> SourceCache = new();
-
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
             var typeDeclarations = context.SyntaxProvider
                 .CreateSyntaxProvider(
                     static (s, _) => GeneratorUtils.IsClassHasAttribute(s),
                     static (ctx, _) => GetSemanticTargetForGeneration(ctx))
-                .Where(static m => m is not null)!;
+                .Where(static m => m is not null);
 
             IncrementalValueProvider<(Compilation Compilation, ImmutableArray<TypeDeclarationSyntax> TypeDeclarationSyntaxes)> compilationAndTypes =
                 context.CompilationProvider.Combine(typeDeclarations.Collect());
@@ -93,21 +91,7 @@ namespace DaoLang.SourceGenerators
 
                 if (GenerateLanguageClass(typeSymbol, usedAttributes) is { } source)
                 {
-                    var name = typeSymbol.ToDisplayString();
-                    if (SourceCache.ContainsKey(name))
-                    {
-                        if (SourceCache[name].Equals(source))
-                        {
-                            return;
-                        }
-                        SourceCache[name] = source;
-                    }
-                    else
-                    {
-                        SourceCache.Add(name, source);
-                    }
-
-                    context.AddSource($"{name}.g.cs", source);
+                    context.AddSource($"{typeSymbol.ToDisplayString()}.g.cs", source);
                 }
             }
         }
@@ -133,13 +117,13 @@ namespace DaoLang.SourceGenerators
             var secondaries = attributeList.Distinct().ToList();
 
             var name = typeSymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
-            var namespaces = new HashSet<string> { "DaoLang" };
+            var namespaces = new HashSet<string> { "DaoLang", "DaoLang.Shared.Enums" };
 
             // 副语言数组
             var secondaryStr = string.Empty;
             if (secondaries?.Any() == true)
             {
-                secondaryStr = @"_secondaryLanguages = new LanguageType[]
+                secondaryStr = @"SecondaryLanguages = new LanguageType[]
             {";
                 secondaryStr += CodePart.Enter;
                 secondaryStr = secondaries.Aggregate(
@@ -161,10 +145,10 @@ namespace DaoLang.SourceGenerators
 
         public static void Init()
         {{
-            _sourceType = typeof({name});
-            _folder = @""{main.ConstructorArguments[0].Value}"";
-            _fileFlag = ""{main.ConstructorArguments[1].Value}"";
-            _mainLanguage = LanguageType.{(LanguageType)(main.ConstructorArguments[2].Value ?? 0)};
+            SourceType = typeof({name});
+            Folder = @""{main.ConstructorArguments[0].Value}"";
+            FileFlag = ""{main.ConstructorArguments[1].Value}"";
+            MainLanguage = LanguageType.{(LanguageType)(main.ConstructorArguments[2].Value ?? 0)};
             {secondaryStr}
         
             SetMainLanguage();
