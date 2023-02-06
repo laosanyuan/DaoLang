@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DaoLang.SourceGenerators.Utils
+namespace DaoLang.SourceGenerators.Components
 {
     internal class CodePart
     {

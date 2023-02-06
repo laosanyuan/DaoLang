@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
+using DaoLang.SourceGenerators.Components;
 
 namespace DaoLang.SourceGenerators
 {
@@ -14,15 +15,6 @@ namespace DaoLang.SourceGenerators
     [Generator(LanguageNames.CSharp)]
     public class EntrySourceGenerator : IIncrementalGenerator
     {
-        /// <summary>
-        /// 主语言标记特性
-        /// </summary>
-        private const string MainLanguageAttributeName = "DaoLang.Attributes.MainLanguageAttribute";
-        /// <summary>
-        /// 词条标记特性
-        /// </summary>
-        private const string EntryAttributeName = "DaoLang.Attributes.EntryAttribute";
-
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
             var typeDeclarations = context.SyntaxProvider
@@ -54,7 +46,7 @@ namespace DaoLang.SourceGenerators
                     {
                         continue;
                     }
-                    if (MainLanguageAttributeName.Equals(attributeSymbol.ContainingType.ToDisplayString()))
+                    if (SupportAttributes.MainLanguageAttributeName.Equals(attributeSymbol.ContainingType.ToDisplayString()))
                     {
                         return typeDeclarationSyntax;
                     }
@@ -91,7 +83,7 @@ namespace DaoLang.SourceGenerators
                     var attributeName = attribute.AttributeClass!.ToDisplayString();
 
                     // 仅处理MajorLanguage标注的类
-                    if (!MainLanguageAttributeName.Equals(attributeName))
+                    if (!SupportAttributes.MainLanguageAttributeName.Equals(attributeName))
                     {
                         continue;
                     }
@@ -142,7 +134,7 @@ namespace DaoLang.SourceGenerators
             foreach (var field in typeSymbol.GetMembers().Where(t => t is { Kind: SymbolKind.Field }))
             {
                 var attributes = field.GetAttributes();
-                var entry = attributes.FirstOrDefault(t => t.AttributeClass?.ToDisplayString().Equals(EntryAttributeName) == true);
+                var entry = attributes.FirstOrDefault(t => t.AttributeClass?.ToDisplayString().Equals(SupportAttributes.EntryAttributeName) == true);
                 if (entry != null)
                 {
                     var fieldType = ((IFieldSymbol)field).Type;

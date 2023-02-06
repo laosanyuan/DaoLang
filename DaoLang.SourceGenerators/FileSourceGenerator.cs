@@ -16,21 +16,6 @@ namespace DaoLang.SourceGenerators
     [Generator(LanguageNames.CSharp)]
     public class FileSourceGenerator : IIncrementalGenerator
     {
-        #region [Fields]
-        /// <summary>
-        /// 主语言标记特性
-        /// </summary>
-        private const string MainLanguageAttributeName = "DaoLang.Attributes.MainLanguageAttribute";
-        /// <summary>
-        /// 词条标记特性
-        /// </summary>
-        private const string EntryAttributeName = "DaoLang.Attributes.EntryAttribute";
-        /// <summary>
-        /// 副语言标记特性
-        /// </summary>
-        private const string SecondaryLanguageAttributeName = "DaoLang.Attributes.SecondaryLanguageAttribute";
-        #endregion
-
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
             IncrementalValuesProvider<TypeDeclarationSyntax> typeDeclarations = context.SyntaxProvider
@@ -63,7 +48,7 @@ namespace DaoLang.SourceGenerators
                         continue;
                     }
                     // 筛选主语言
-                    if (MainLanguageAttributeName.Equals(attributeSymbol.ContainingType.ToDisplayString()))
+                    if (SupportAttributes.MainLanguageAttributeName.Equals(attributeSymbol.ContainingType.ToDisplayString()))
                     {
                         return typeDeclarationSyntax;
                     }
@@ -100,7 +85,7 @@ namespace DaoLang.SourceGenerators
 
                 var attributes = typeSymbol.GetAttributes();
                 var main = attributes.FirstOrDefault(t =>
-                    t.AttributeClass!.ToDisplayString().Equals(MainLanguageAttributeName));
+                    t.AttributeClass!.ToDisplayString().Equals(SupportAttributes.MainLanguageAttributeName));
 
                 // 只有设置了主语言才生成；仅有副语言无效
                 if (main == null)
@@ -217,7 +202,7 @@ namespace DaoLang.SourceGenerators
             var key = directory + fileFlag;
             foreach (var attribute in attributes.Where(
                          t => t.AttributeClass?.ToDisplayString()
-                             .Equals(SecondaryLanguageAttributeName) == true))
+                             .Equals(SupportAttributes.SecondaryLanguageAttributeName) == true))
             {
                 if (attribute.ConstructorArguments == null
                     || attribute.ConstructorArguments.Length <= 0)
@@ -289,7 +274,7 @@ namespace DaoLang.SourceGenerators
             // 生成副语言文件
             foreach (var attribute in attributes.Where(
                          t => t.AttributeClass?.ToDisplayString()
-                             .Equals(SecondaryLanguageAttributeName) == true))
+                             .Equals(SupportAttributes.SecondaryLanguageAttributeName) == true))
             {
                 type = (LanguageType)attribute.ConstructorArguments[0].Value;
                 languages.Add(type);
@@ -326,7 +311,7 @@ namespace DaoLang.SourceGenerators
             foreach (var field in typeSymbol.GetMembers().Where(t => t is { Kind: SymbolKind.Field }))
             {
                 var attributes = field.GetAttributes();
-                var entry = attributes.FirstOrDefault(t => t.AttributeClass?.ToDisplayString().Equals(EntryAttributeName) == true);
+                var entry = attributes.FirstOrDefault(t => t.AttributeClass?.ToDisplayString().Equals(SupportAttributes.EntryAttributeName) == true);
                 if (entry == null)
                 {
                     continue;

@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using DaoLang.SourceGenerators.Components;
 
 namespace DaoLang.SourceGenerators
 {
@@ -14,15 +15,6 @@ namespace DaoLang.SourceGenerators
     [Generator(LanguageNames.CSharp)]
     public class LanguageConstructorSourceGenerator : IIncrementalGenerator
     {
-        /// <summary>
-        /// 主语言标记特性
-        /// </summary>
-        private const string MainLanguageAttributeName = "DaoLang.Attributes.MainLanguageAttribute";
-        /// <summary>
-        /// 副语言标记特性
-        /// </summary>
-        private const string SecondaryLanguageAttributeName = "DaoLang.Attributes.SecondaryLanguageAttribute";
-
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
             var typeDeclarations = context.SyntaxProvider
@@ -53,7 +45,7 @@ namespace DaoLang.SourceGenerators
                     {
                         continue;
                     }
-                    if (MainLanguageAttributeName.Equals(attributeSymbol.ContainingType.ToDisplayString()))
+                    if (SupportAttributes.MainLanguageAttributeName.Equals(attributeSymbol.ContainingType.ToDisplayString()))
                     {
                         return typeDeclarationSyntax;
                     }
@@ -85,7 +77,7 @@ namespace DaoLang.SourceGenerators
                 var usedAttributes =
                     (from attribute in typeSymbol.GetAttributes()
                      let attributeName = attribute.AttributeClass!.ToDisplayString()
-                     where MainLanguageAttributeName.Equals(attributeName) || SecondaryLanguageAttributeName.Equals(attributeName)
+                     where SupportAttributes.MainLanguageAttributeName.Equals(attributeName) || SupportAttributes.SecondaryLanguageAttributeName.Equals(attributeName)
                      select attribute)
                     .ToList();
 
@@ -105,7 +97,7 @@ namespace DaoLang.SourceGenerators
         private static string GenerateLanguageClass(ISymbol typeSymbol, List<AttributeData> attributeList)
         {
             // 获取主语言
-            var main = attributeList.FirstOrDefault(t => t.AttributeClass!.ToDisplayString().Equals(MainLanguageAttributeName));
+            var main = attributeList.FirstOrDefault(t => t.AttributeClass!.ToDisplayString().Equals(SupportAttributes.MainLanguageAttributeName));
             if (main is null)
             {
                 return string.Empty;
