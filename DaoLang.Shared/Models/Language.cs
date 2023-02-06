@@ -162,10 +162,11 @@ namespace DaoLang.Shared.Models
         /// </summary>
         [XmlAttribute]
         public string Key { get; set; }
+
         /// <summary>
         /// 内容
         /// </summary>
         [XmlAttribute]
-        public string Content { get; set; }
+        public string Content { get; set; } = string.Empty;
     }
 }
