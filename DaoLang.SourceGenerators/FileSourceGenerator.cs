@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -269,20 +270,16 @@ namespace DaoLang.SourceGenerators
                 return;
             }
 
-            var languages = new List<LanguageType>();
-            var key = directory + fileFlag;
             // 生成副语言文件
             foreach (var attribute in attributes.Where(
-                         t => t.AttributeClass?.ToDisplayString()
-                             .Equals(SupportAttributes.SecondaryLanguageAttributeName) == true))
+                         t => t.AttributeClass?.ToDisplayString().Equals(SupportAttributes.SecondaryLanguageAttributeName) == true))
             {
-                type = (LanguageType)attribute.ConstructorArguments[0].Value;
-                languages.Add(type);
+                type = (LanguageType)attribute.ConstructorArguments[0].Value!;
                 sourceName = SourceReader.GetFileName(directory, fileFlag, type);
                 sources.Add(sourceName);
                 GeneratorFile(
                     typeSymbol,
-                    Path.Combine(Path.GetDirectoryName(csprojFile), sourceName),
+                    Path.Combine(Path.GetDirectoryName(csprojFile)!, sourceName),
                     type);
             }
 
@@ -297,7 +294,6 @@ namespace DaoLang.SourceGenerators
         /// <param name="fileName">资源文件名称</param>
         /// <param name="type">语言类型</param>
         /// <param name="defalutValue">主语言默认字段值</param>
-        /// <param name="sourceFileType">生成文件类型</param>
         private static void GeneratorFile(
             INamespaceOrTypeSymbol typeSymbol,
             string fileName,
@@ -306,7 +302,7 @@ namespace DaoLang.SourceGenerators
             bool isMainLanguage = false)
         {
             var isExistFile = SourceReader.Load(fileName, out Language existSource);
-            var result = new Language { IsMainLanguage = isMainLanguage };
+            var result = new Language { IsMainLanguage = isMainLanguage, LanguageType = type };
 
             foreach (var field in typeSymbol.GetMembers().Where(t => t is { Kind: SymbolKind.Field }))
             {

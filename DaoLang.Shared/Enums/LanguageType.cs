@@ -25,12 +25,6 @@ namespace DaoLang.Shared.Enums
         [Description("阿拉伯语（沙特阿拉伯）")]
         AR_SA,
 
-        [Description("阿拉伯语（伊拉克）")]
-        AR_IQ,
-
-        [Description("阿拉伯文（卡塔尔）")]
-        AR_QA,
-
         [Description("朝鲜语（韩国）")]
         KO_KR,
 

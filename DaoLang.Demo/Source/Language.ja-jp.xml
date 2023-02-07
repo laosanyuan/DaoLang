@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-16"?>
+<Language xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <LanguageType>JA_JP</LanguageType>
+  <IsMainLanguage>false</IsMainLanguage>
+  <Items>
+    <LanguageItem Key="Chinese" Content="" />
+    <LanguageItem Key="ChineseTw" Content="" />
+    <LanguageItem Key="English" Content="" />
+    <LanguageItem Key="Arab" Content="" />
+    <LanguageItem Key="Japanese" Content="" />
+    <LanguageItem Key="Korean" Content="" />
+    <LanguageItem Key="German" Content="" />
+  </Items>
+</Language>

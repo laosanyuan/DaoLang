@@ -13,5 +13,18 @@ namespace DaoLang.Demo
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            Localization.LanguageChanged += LanguageDemo_LanguageChanged;
+            Localization.Init();
+        }
+
+        private static void LanguageDemo_LanguageChanged(LanguageEventArgs args)
+        {
+            // 替换语言资源
+            Application.Current.Resources.MergedDictionaries.Clear();
+            Application.Current.Resources.MergedDictionaries.Add(args.ResourceDictionary);
+        }
     }
 }

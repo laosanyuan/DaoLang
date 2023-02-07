@@ -5,8 +5,33 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DaoLang.Demo"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="DaoLang Demo" Height="600" Width="1000">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2.5*"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Name="en_us" />
+            <TextBlock Text="{DynamicResource {x:Static local:Localization.ChineseKey}}"/>
+            <TextBlock Name="zh_tw" />
+            <TextBlock Text="{DynamicResource {x:Static local:Localization.ArabKey}}"/>
+            <TextBlock Text="{DynamicResource {x:Static local:Localization.JapaneseKey}}"/>
+            <TextBlock Text="{DynamicResource {x:Static local:Localization.GermanKey}}"/>
+            <TextBlock Text="{DynamicResource {x:Static local:Localization.KoreanKey}}"/>
+        </StackPanel>
+
+        <WrapPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+            <!--直接填key字符串-->
+            <Button Content="{DynamicResource Chinese}"  Height="50" Width="200" Click="Button_Click"/>
+            <Button Content="{DynamicResource ChineseTw}" Height="50" Width="200" Click="Button_TW_Click"/>
+            <Button Content="{DynamicResource English}" Height="50" Width="200" Click="Button_English_Click"/>
+            <Button Content="{DynamicResource Arab}" Height="50" Width="200" Click="Button_Arab_Click"/>
+            <Button Content="{DynamicResource Japanese}" Height="50" Width="200" Click="Button_Japanese_Click"/>
+            <Button Content="{DynamicResource German}" Height="50" Width="200" Click="Button_German_Click"/>
+            <Button Content="{DynamicResource Korean}" Height="50" Width="200" Click="Button_Korean_Click"/>
+        </WrapPanel>
 
     </Grid>
 </Window>
