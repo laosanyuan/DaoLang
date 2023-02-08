@@ -5,6 +5,22 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <Title>DaoLang.WPF</Title>
+    <Authors>1dao</Authors>
+    <Description>
+用于管理WPF程序国际化资源。通过自动生成源代码的方式减少开发人员的工作量、降低资源引用过程中人为因素导致异常的概率。
+主要包含以下功能：
+- 自动生成词条资源的通用模板属性和相关函数。
+- 自动生成词条资源文件和指定输出位路径。
+- 自动生成WPF资源字典，方便绑定使用。
+    </Description>
+    <PakageTags>WPF;dotnet;CSharp;Localization;Globalization</PakageTags>
+    <PackageIcon>content\logo.png</PackageIcon>
+    <PackageOutputPath>..\..\bin</PackageOutputPath>
+    <Version>1.0.1</Version>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(TargetFramework)' == 'net5.0-windows' Or '$(TargetFramework)' == 'net6.0-windows' Or '$(TargetFramework)' == 'net7.0-windows'">
     <DefineConstants>WPF</DefineConstants>
     <EnableTrimAnalyzer>false</EnableTrimAnalyzer>
@@ -12,14 +28,15 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <ProjectReference Include="..\DaoLang.SourceGenerators\DaoLang.SourceGeneration.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\DaoLang.SourceGeneration\DaoLang.SourceGeneration.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <Import Project="..\DaoLang.Shared\DaoLang.Shared.projitems" Label="Shared" />
   <Import Project="..\DaoLang.Base\DaoLang.Base.projitems" Label="Shared" Condition="'$(TargetFramework)' == 'net5.0-windows' Or '$(TargetFramework)' == 'net6.0-windows' Or '$(TargetFramework)' == 'net7.0-windows'" />
 
   <ItemGroup Label="Package">
-    <None Include="..\DaoLang.SourceGenerators\bin\$(Configuration)\netstandard2.0\DaoLang.SourceGeneration.dll" PackagePath="analyzers\dotnet\roslyn4.0\cs" Pack="true" Visible="false" />
-    <None Include="..\DaoLang.SourceGenerators\bin\$(Configuration)\netstandard2.0\DaoLang.SourceGeneration.dll" PackagePath="analyzers\dotnet\roslyn4.4\cs" Pack="true" Visible="false" />
+    <None Include="..\DaoLang.SourceGeneration\bin\$(Configuration)\netstandard2.0\DaoLang.SourceGeneration.dll" PackagePath="analyzers\dotnet\roslyn4.0\cs" Pack="true" Visible="false" />
+    <None Include="..\DaoLang.SourceGeneration\bin\$(Configuration)\netstandard2.0\DaoLang.SourceGeneration.dll" PackagePath="analyzers\dotnet\roslyn4.4\cs" Pack="true" Visible="false" />
+    <None Include="..\..\images\logo.png" Package="content" Pack="true" Visible="false"/>
   </ItemGroup>
 </Project>
