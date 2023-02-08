@@ -7,14 +7,11 @@
     <DefineConstants>WPF</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DaoLang.SourceGenerators\DaoLang.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="..\DaoLang\DaoLang.csproj" />
+    <ProjectReference Include="..\DaoLang.SourceGeneration\DaoLang.SourceGeneration.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\DaoLang.WPF\DaoLang.WPF.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Source\" />
-  </ItemGroup>
-  <!--本节点由DaoLang自动生成，请勿手动修改-->
-  <ItemGroup>
   </ItemGroup>
   <!--本节点由DaoLang自动生成，请勿手动修改-->
   <ItemGroup>

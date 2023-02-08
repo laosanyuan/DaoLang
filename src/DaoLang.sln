@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32708.82
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DaoLang", "DaoLang\DaoLang.csproj", "{FA1E8E9C-D954-4654-BD79-1A7A69C56B62}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DaoLang.SourceGenerators", "DaoLang.SourceGenerators\DaoLang.SourceGenerators.csproj", "{FB97A605-1C33-4D6F-AFA9-D040A335E2F5}"
-EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "DaoLang.Shared", "DaoLang.Shared\DaoLang.Shared.shproj", "{CF6A33B8-FE57-43A5-AE4D-F530C2903828}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "DaoLang.Base", "DaoLang.Base\DaoLang.Base.shproj", "{FBF02EB9-39E0-4D45-B76A-58EEC2BD7A5D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DaoLang.Demo", "DaoLang.Demo\DaoLang.Demo.csproj", "{CD72EC2A-0D62-4E53-92BE-DD799A0039E0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DaoLang.WPF", "DaoLang.WPF\DaoLang.WPF.csproj", "{CFA65079-241C-46B8-BAF4-6C7DAE5399FE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DaoLang.SourceGeneration", "DaoLang.SourceGeneration\DaoLang.SourceGeneration.csproj", "{6D1899CD-5047-4D36-9AE2-9A41C630C6E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,18 +19,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{FA1E8E9C-D954-4654-BD79-1A7A69C56B62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FA1E8E9C-D954-4654-BD79-1A7A69C56B62}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FA1E8E9C-D954-4654-BD79-1A7A69C56B62}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FA1E8E9C-D954-4654-BD79-1A7A69C56B62}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FB97A605-1C33-4D6F-AFA9-D040A335E2F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FB97A605-1C33-4D6F-AFA9-D040A335E2F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FB97A605-1C33-4D6F-AFA9-D040A335E2F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FB97A605-1C33-4D6F-AFA9-D040A335E2F5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CD72EC2A-0D62-4E53-92BE-DD799A0039E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CD72EC2A-0D62-4E53-92BE-DD799A0039E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD72EC2A-0D62-4E53-92BE-DD799A0039E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD72EC2A-0D62-4E53-92BE-DD799A0039E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFA65079-241C-46B8-BAF4-6C7DAE5399FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFA65079-241C-46B8-BAF4-6C7DAE5399FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFA65079-241C-46B8-BAF4-6C7DAE5399FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFA65079-241C-46B8-BAF4-6C7DAE5399FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D1899CD-5047-4D36-9AE2-9A41C630C6E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D1899CD-5047-4D36-9AE2-9A41C630C6E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D1899CD-5047-4D36-9AE2-9A41C630C6E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D1899CD-5047-4D36-9AE2-9A41C630C6E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -39,9 +39,9 @@ Global
 		SolutionGuid = {8B7211B6-3A1E-4F5B-944E-9EC33B2B6347}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		DaoLang.Shared\DaoLang.Shared.projitems*{6d1899cd-5047-4d36-9ae2-9a41c630c6e5}*SharedItemsImports = 5
 		DaoLang.Shared\DaoLang.Shared.projitems*{cf6a33b8-fe57-43a5-ae4d-f530c2903828}*SharedItemsImports = 13
-		DaoLang.Shared\DaoLang.Shared.projitems*{fa1e8e9c-d954-4654-bd79-1a7a69c56b62}*SharedItemsImports = 5
-		DaoLang.Shared\DaoLang.Shared.projitems*{fb97a605-1c33-4d6f-afa9-d040a335e2f5}*SharedItemsImports = 5
+		DaoLang.Shared\DaoLang.Shared.projitems*{cfa65079-241c-46b8-baf4-6c7dae5399fe}*SharedItemsImports = 5
 		DaoLang.Base\DaoLang.Base.projitems*{fbf02eb9-39e0-4d45-b76a-58eec2bd7a5d}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal
