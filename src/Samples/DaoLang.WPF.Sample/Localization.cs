@@ -1,7 +1,7 @@
 ﻿using DaoLang.Attributes;
 using DaoLang.Shared.Enums;
 
-namespace DaoLang.Demo
+namespace DaoLang.Sample
 {
     [MainLanguage("Source", "Language", LanguageType.EN_US)]
     [SecondaryLanguage(LanguageType.ZH_CN)]

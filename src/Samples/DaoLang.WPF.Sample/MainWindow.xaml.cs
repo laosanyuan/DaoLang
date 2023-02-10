@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace DaoLang.Demo
+namespace DaoLang.Sample
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
