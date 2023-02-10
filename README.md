@@ -119,7 +119,7 @@
 
    可在项目的Dependencies/Analyzers/DaoLang.SourceGeneration下查看生成的代码：
 
-   ![](\images\analyzers.png)
+   ![](/images/analyzers.png)
 
 5. 切换语言。
 
@@ -133,7 +133,9 @@
 
    除主要语言会自动生成不需要处理，**次要语言的资源字典内容需要人工将词条的翻译结果填充进去**（后续会开发对应的VS插件优化此处的使用体验）。
 
-至此完成了DaoLang.WPF的全部使用流程，详细效果可以参看示例代码。
+至此完成了DaoLang.WPF的全部使用流程，详细效果可以参看示例代码：
+
+![](/images/demo.gif)
 
 ### 注意事项
 
