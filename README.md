@@ -135,7 +135,7 @@
 
 至此完成了DaoLang.WPF的全部使用流程，详细效果可以参看示例代码：
 
-![](/images/demo.gif)
+![](/images/sample.gif)
 
 ### 注意事项
 
