@@ -7,7 +7,12 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+
+#if WPF
 using System.Windows;
+#elif WinUI3
+using Microsoft.UI.Xaml;
+#endif
 
 namespace DaoLang
 {

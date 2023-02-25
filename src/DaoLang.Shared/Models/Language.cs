@@ -2,8 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using System.Xml.Serialization;
+
+#if WPF
+using System.Windows;
+#elif WinUI3
+using Microsoft.UI.Xaml;
+#endif
 
 namespace DaoLang.Shared.Models
 {
@@ -129,8 +134,8 @@ namespace DaoLang.Shared.Models
 
         public override int GetHashCode() => this.Items.GetHashCode() + this.LanguageType.GetHashCode() + this.IsMainLanguage.GetHashCode();
 
-#if WPF
-        public ResourceDictionary ConvertToResourceDictionary( Language backup = null)
+#if WinUI3 || WPF
+        public ResourceDictionary ConvertToResourceDictionary(Language backup = null)
         {
             var result = new ResourceDictionary();
             Items?.ForEach(t =>
@@ -148,6 +153,7 @@ namespace DaoLang.Shared.Models
             return result;
         }
 #endif
+        
         #endregion
     }
 
