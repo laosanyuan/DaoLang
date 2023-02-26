@@ -6,20 +6,11 @@
 	<a href="https://github.com/laosanyuan/DaoLang/blob/master/LICENSE">
 		<img alt="GitHub license" src="https://img.shields.io/github/license/laosanyuan/DaoLang">
 	</a>
-	<a>
-		<img alt=".Net Version" src="https://img.shields.io/badge/.net-%3E%3D5.0-brightgreen&logo=dotnet&logoColor=brightgreen">
-	</a>
     <a>
         <img alt="GitHub stars" src="https://img.shields.io/github/stars/laosanyuan/daolang?style=social">
     </a>
     <a>
         <img alt="GitHub forks" src="https://img.shields.io/github/forks/laosanyuan/daolang?style=social">
-    </a>
-    <a href="https://www.nuget.org/packages/DaoLang.WPF">
-        <img alt="DaoLang.WPF Downloads" src="https://img.shields.io/nuget/dt/DaoLang.WPF?label=DaoLang.WPF%20Downloads&logo=nuget&logoColor=blue">
-    </a>
-    <a>
-        <img alt="Daolang.WPF Version" src="https://img.shields.io/nuget/v/DaoLang.WPF?color=green&label=Daolang.WPF%20Version&logo=nuget&logoColor=blue">
     </a>
 </p>
 
@@ -30,6 +21,16 @@
 多语言本地化开发中涉及到的key-value形式原理较为简单，但还是会遇到一些问题，需要人工进行管理。如人力保证key唯一、引用key手写字符串可能存在输入错误、不同语言资源文件的手动同步、对于资源内容增删的不确定等。在程序中语言资源量特别大时，这些问题显得更为棘手。
 
 基于以上现状，DaoLang把最重要的文件和key-value管理，统一收归框架自动生成，使用者仅需要定义资源类和资源字段并标注对应的Attribute即可。框架会根据对应的Attribute生成一系列配套的代码和资源文件。在对字段的使用过程中，可以直接使用相应字段生成的属性，不再使用硬编码字符串的方式获取资源，这样可以有效的减少因为人为输入错误引发的bug——手写错误时会引发编译报错。
+
+## 版本详情
+
+| Name             | Details                                                      |
+| :--------------- | ------------------------------------------------------------ |
+| DaoLang.WPF      | <img alt=".Net Version" src="https://img.shields.io/badge/.net-%3E%3D5.0-brightgreen&logo=dotnet&logoColor=brightgreen"><img alt="Daolang.WPF Version" src="https://img.shields.io/nuget/v/DaoLang.WPF?color=green&label=Daolang.WPF%20Version&logo=nuget&logoColor=blue"><img alt="DaoLang.WPF Downloads" src="https://img.shields.io/nuget/dt/DaoLang.WPF?label=DaoLang.WPF%20Downloads&logo=nuget&logoColor=blue"> |
+| DaoLang.WinUI3   | <img alt=".Net Version" src="https://img.shields.io/badge/.net-%3E%3D6.0-brightgreen&logo=dotnet&logoColor=brightgreen"><img alt="WinUI3 Version" src="https://img.shields.io/nuget/v/DaoLang.WinUI3?color=green&label=Daolang.WinUI3%20Version&logo=nuget&logoColor=blue"><img alt="DaoLang.WinUI3 Downloads" src="https://img.shields.io/nuget/dt/DaoLang.WinUI3?label=DaoLang.WinUI3%20Downloads&logo=nuget&logoColor=blue"> |
+| DaoLang.Avalonia | * 待添加                                                     |
+| DaoLang.MAUI     | * 待添加                                                     |
+| DaoLang.UWP      | * 待添加                                                     |
 
 ## 功能
 
@@ -145,9 +146,10 @@
 
 ## Todo
 
-- [ ] 支持Avalonia。
-- [ ] 支持Winform。
-- [ ] 支持WinUI 3。
-- [ ] 支持MAUI.
-- [ ] 开发VS插件资源文件管理工具。
-- [ ] 添加语言被删除同步时删除资源文件和项目文件复制输出标记功能。
+- [ ] 支持Avalonia
+- [ ] 支持Winform
+- [x] 支持WinUI 3
+- [ ] 支持MAUI
+- [ ] 支持UWP
+- [ ] 开发VS插件资源文件管理工具
+- [ ] 添加语言被删除同步时删除资源文件和项目文件复制输出标记功能
