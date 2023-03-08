@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "DaoLang.WinUI3.Sample (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "DaoLang.WinUI3.Sample (Unpackaged)": {
+      "commandName": "Project"
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    }
+  }
+}

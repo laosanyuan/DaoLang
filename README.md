@@ -24,13 +24,13 @@
 
 ## 版本详情
 
-| Name             | Details                                                      |
-| :--------------- | ------------------------------------------------------------ |
-| DaoLang.WPF      | <img alt=".Net Version" src="https://img.shields.io/badge/.net-%3E%3D5.0-brightgreen&logo=dotnet&logoColor=brightgreen"><img alt="Daolang.WPF Version" src="https://img.shields.io/nuget/v/DaoLang.WPF?color=green&label=Daolang.WPF%20Version&logo=nuget&logoColor=blue"><img alt="DaoLang.WPF Downloads" src="https://img.shields.io/nuget/dt/DaoLang.WPF?label=DaoLang.WPF%20Downloads&logo=nuget&logoColor=blue"> |
-| DaoLang.WinUI3   | <img alt=".Net Version" src="https://img.shields.io/badge/.net-%3E%3D6.0-brightgreen&logo=dotnet&logoColor=brightgreen"><img alt="WinUI3 Version" src="https://img.shields.io/nuget/v/DaoLang.WinUI3?color=green&label=Daolang.WinUI3%20Version&logo=nuget&logoColor=blue"><img alt="DaoLang.WinUI3 Downloads" src="https://img.shields.io/nuget/dt/DaoLang.WinUI3?label=DaoLang.WinUI3%20Downloads&logo=nuget&logoColor=blue"> |
-| DaoLang.Avalonia | * 待添加                                                     |
-| DaoLang.MAUI     | * 待添加                                                     |
-| DaoLang.UWP      | * 待添加                                                     |
+| Name                                                         | Details                                                      |
+| :----------------------------------------------------------- | ------------------------------------------------------------ |
+| [DaoLang.WPF](https://www.nuget.org/packages/DaoLang.WPF)    | <img alt=".Net Version" src="https://img.shields.io/badge/.net-%3E%3D5.0-brightgreen&logo=dotnet&logoColor=brightgreen"> <img alt="Daolang.WPF Version" src="https://img.shields.io/nuget/v/DaoLang.WPF?color=green&label=Daolang.WPF%20Version&logo=nuget&logoColor=blue"> <img alt="DaoLang.WPF Downloads" src="https://img.shields.io/nuget/dt/DaoLang.WPF?label=DaoLang.WPF%20Downloads&logo=nuget&logoColor=blue"> |
+| [DaoLang.WinUI3](https://www.nuget.org/packages/DaoLang.WinUI3) | <img alt=".Net Version" src="https://img.shields.io/badge/.net-%3E%3D6.0-brightgreen&logo=dotnet&logoColor=brightgreen"> <img alt="WinUI3 Version" src="https://img.shields.io/nuget/v/DaoLang.WinUI3?color=green&label=Daolang.WinUI3%20Version&logo=nuget&logoColor=blue"> <img alt="DaoLang.WinUI3 Downloads" src="https://img.shields.io/nuget/dt/DaoLang.WinUI3?label=DaoLang.WinUI3%20Downloads&logo=nuget&logoColor=blue"> |
+| DaoLang.Avalonia                                             | * 待添加                                                     |
+| DaoLang.MAUI                                                 | * 待添加                                                     |
+| DaoLang.UWP                                                  | * 待添加                                                     |
 
 ## 功能
 
