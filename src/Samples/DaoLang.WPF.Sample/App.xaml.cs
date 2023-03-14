@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 
 namespace DaoLang.Sample
 {
@@ -20,7 +14,7 @@ namespace DaoLang.Sample
             Localization.Init();
         }
 
-        private static void LanguageDemo_LanguageChanged(LanguageEventArgs args)
+        private void LanguageDemo_LanguageChanged(LanguageEventArgs args)
         {
             // 替换语言资源
             Application.Current.Resources.MergedDictionaries.Clear();
