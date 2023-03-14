@@ -12,5 +12,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Attributes\EntryAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Attributes\LanguageAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LanguageResource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ObservableString.cs" />
   </ItemGroup>
 </Project>

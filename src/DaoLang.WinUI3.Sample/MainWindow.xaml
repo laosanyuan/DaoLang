@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:sample="using:DaoLang.WinUI3.Sample"
     mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
@@ -13,25 +12,27 @@
         </Grid.RowDefinitions>
 
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock Text="{x:Bind sample: Localization.EnglishKey}" />
-            <TextBlock Text="{x:Bind sample: Localization.ChineseKey}"/>
-            <!--<TextBlock Text="{x:Bind sample: Localization.ChineseTwKey}"/>-->
-            <!--<TextBlock Text="{ThemeResource ChineseTwKey}"/>-->
-            <TextBlock Text="{x:Bind sample: Localization.ArabKey}"/>
-            <TextBlock Text="{x:Bind sample: Localization.JapaneseKey}"/>
-            <TextBlock Text="{x:Bind sample: Localization.GermanKey}"/>
-            <TextBlock Text="{x:Bind sample: Localization.KoreanKey}"/>
+            <TextBlock Text="{Binding Value,Source={StaticResource English}}" />
+            <TextBlock Text="{Binding Value,Source={StaticResource Chinese}}"/>
+            <TextBlock Text="{Binding Value,Source={StaticResource ChineseTw}}"/>
+            <TextBlock Text="{Binding Value,Source={StaticResource Arab}}"/>
+            <TextBlock Text="{Binding Value,Source={StaticResource Japanese}}"/>
+            <TextBlock Text="{Binding Value,Source={StaticResource German}}"/>
+            <TextBlock Text="{Binding Value,Source={StaticResource Korean}}"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center">
-            <!--Ö±½ÓÌîkey×Ö·û´®-->
-            <Button Content="{x:Bind sample: Localization.ChineseKey}"  Height="50" Width="200" Click="Button_Click"/>
-            <Button Content="{x:Bind sample: Localization.ChineseTwKey}" Height="50" Width="200" Click="Button_TW_Click"/>
-            <Button Content="{x:Bind sample: Localization.EnglishKey}" Height="50" Width="200" Click="Button_English_Click"/>
-            <Button Content="{x:Bind sample: Localization.ArabKey}" Height="50" Width="200" Click="Button_Arab_Click"/>
-            <Button Content="{x:Bind sample: Localization.JapaneseKey}" Height="50" Width="200" Click="Button_Japanese_Click"/>
-            <Button Content="{x:Bind sample: Localization.GermanKey}" Height="50" Width="200" Click="Button_German_Click"/>
-            <Button Content="{x:Bind sample: Localization.KoreanKey}" Height="50" Width="200" Click="Button_Korean_Click"/>
+        <StackPanel Grid.Row="1" Orientation="Vertical">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+                <Button Content="{Binding Value,Source={StaticResource Chinese}}"  Height="50" Width="200" Click="Button_Click"/>
+                <Button Content="{Binding Value,Source={StaticResource ChineseTw}}" Height="50" Width="200" Click="Button_TW_Click"/>
+                <Button Content="{Binding Value,Source={StaticResource English}}" Height="50" Width="200" Click="Button_English_Click"/>
+                <Button Content="{Binding Value,Source={StaticResource Arab}}" Height="50" Width="200" Click="Button_Arab_Click"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+                <Button Content="{Binding Value,Source={StaticResource Japanese}}" Height="50" Width="200" Click="Button_Japanese_Click"/>
+                <Button Content="{Binding Value,Source={StaticResource German}}" Height="50" Width="200" Click="Button_German_Click"/>
+                <Button Content="{Binding Value,Source={StaticResource Korean}}" Height="50" Width="200" Click="Button_Korean_Click"/>
+            </StackPanel>
         </StackPanel>
 
     </Grid>

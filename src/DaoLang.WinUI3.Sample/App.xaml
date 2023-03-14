@@ -12,7 +12,6 @@
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
-                <x:String x:Key="ControlsName">All controls</x:String>
             <!-- Other app resources here -->
         </ResourceDictionary>
     </Application.Resources>
