@@ -67,6 +67,8 @@
 
 ## 使用方法
 
+以下内容以WPF项目（DaoLang.WPF）为例，其他框架下可能略有不同，但是原理类似。具体可参考项目中各UI框架对应的demo。
+
 1. 添加 DaoLang.WPF 引用，或在 nuget 上搜索 [DaoLang.WPF](https://www.nuget.org/packages/DaoLang.WPF)。
 
    ```

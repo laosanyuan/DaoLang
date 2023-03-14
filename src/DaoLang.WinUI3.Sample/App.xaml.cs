@@ -38,6 +38,7 @@ namespace DaoLang.WinUI3.Sample
 
         private static void LanguageDemo_LanguageChanged(LanguageEventArgs args)
         {
+            // WinUI 3 中不支持像WPF中DynamicResource那样的动态绑定方式，所以需要通过ObservableString来实现实时更新
             foreach (var item in args.ResourceDictionary)
             {
                 var key = item.Key as string;
