@@ -12,6 +12,8 @@ using System.Reflection;
 using System.Windows;
 #elif WinUI3
 using Microsoft.UI.Xaml;
+#elif Avalonia
+using System.Collections.Generic;
 #endif
 
 namespace DaoLang
@@ -169,7 +171,11 @@ namespace DaoLang
                 LanguageChanged?.Invoke(new LanguageEventArgs()
                 {
                     LanguageType = language.LanguageType,
+#if Avalonia
+                    Dictionary = language.ConvertToDictionary(MainSource),
+#elif WPF || WinUI3
                     ResourceDictionary = language.ConvertToResourceDictionary(MainSource)
+#endif
                 });
                 return true;
             }
@@ -181,6 +187,10 @@ namespace DaoLang
     public class LanguageEventArgs : EventArgs
     {
         public LanguageType LanguageType { get; set; }
+#if Avalonia
+        public Dictionary<string, string> Dictionary { get; set; }
+#else
         public ResourceDictionary ResourceDictionary { get; set; }
+#endif
     }
 }

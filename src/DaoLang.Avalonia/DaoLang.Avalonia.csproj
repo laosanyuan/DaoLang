@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net5.0;net6.0;net7.0</TargetFrameworks>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Title>DaoLang.Avalonia</Title>
+    <Authors>1dao</Authors>
+    <Description>
+      用于管理WPF程序国际化资源。通过自动生成源代码的方式减少开发人员的工作量、降低资源引用过程中人为因素导致异常的概率。
+      主要包含以下功能：
+      - 自动生成词条资源的通用模板属性和相关函数。
+      - 自动生成词条资源文件和指定输出位路径。
+      - 自动生成Avalonia资源字典，方便绑定使用。
+    </Description>
+    <PakageTags>Avalonia;dotnet;CSharp;Localization;Globalization</PakageTags>
+    <PackageIcon>content\logo.png</PackageIcon>
+    <PackageOutputPath>..\..\bin</PackageOutputPath>
+    <Version>1.0.0</Version>
+    <RepositoryUrl>https://github.com/laosanyuan/DaoLang</RepositoryUrl>
+    <PackageProjectUrl>https://www.nuget.org/packages/DaoLang.Avalonia</PackageProjectUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
+    <DefineConstants>Avalonia</DefineConstants>
+    <EnableTrimAnalyzer>false</EnableTrimAnalyzer>
+    <IsTrimmable>true</IsTrimmable>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <ProjectReference Include="..\DaoLang.SourceGeneration\DaoLang.SourceGeneration.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <Import Project="..\DaoLang.Shared\DaoLang.Shared.projitems" Label="Shared" />
+  <Import Project="..\DaoLang.Base\DaoLang.Base.projitems" Label="Shared" Condition="'$(TargetFramework)' != 'netstandard2.0'" />
+
+  <ItemGroup Label="Package">
+    <None Include="..\DaoLang.SourceGeneration\bin\$(Configuration)\netstandard2.0\DaoLang.SourceGeneration.dll" PackagePath="analyzers\dotnet\roslyn4.0\cs" Pack="true" Visible="false" />
+    <None Include="..\DaoLang.SourceGeneration\bin\$(Configuration)\netstandard2.0\DaoLang.SourceGeneration.dll" PackagePath="analyzers\dotnet\roslyn4.4\cs" Pack="true" Visible="false" />
+    <None Include="..\..\images\logo.png" Package="content" Pack="true" Visible="false" />
+  </ItemGroup>
+</Project>

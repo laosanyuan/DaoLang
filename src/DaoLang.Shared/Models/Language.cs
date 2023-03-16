@@ -152,8 +152,26 @@ namespace DaoLang.Shared.Models
             });
             return result;
         }
+#elif Avalonia
+        public Dictionary<string, string> ConvertToDictionary(Language backup = null)
+        {
+            var result = new Dictionary<string, string>();
+            Items?.ForEach(t =>
+            {
+                // 当词条内容为空时使用备份语言词条内容作为替补
+                if (string.IsNullOrEmpty(t.Content) && backup != null)
+                {
+                    result.Add(t.Key, backup[t.Key].Content);
+                }
+                else
+                {
+                    result.Add(t.Key, t.Content);
+                }
+            });
+            return result;
+        }
 #endif
-        
+
         #endregion
     }
 
