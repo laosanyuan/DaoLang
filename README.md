@@ -26,9 +26,9 @@
 
 | Name                                                         | Details                                                      |
 | :----------------------------------------------------------- | ------------------------------------------------------------ |
-| [DaoLang.WPF](https://www.nuget.org/packages/DaoLang.WPF)    | <img alt=".Net Version" src="https://img.shields.io/badge/.net-%3E%3D5.0-brightgreen&logo=dotnet&logoColor=brightgreen"> <img alt="Daolang.WPF Version" src="https://img.shields.io/nuget/v/DaoLang.WPF?color=green&label=Daolang.WPF%20Version&logo=nuget&logoColor=blue"> <img alt="DaoLang.WPF Downloads" src="https://img.shields.io/nuget/dt/DaoLang.WPF?label=DaoLang.WPF%20Downloads&logo=nuget&logoColor=blue"> |
-| [DaoLang.WinUI3](https://www.nuget.org/packages/DaoLang.WinUI3) | <img alt=".Net Version" src="https://img.shields.io/badge/.net-%3E%3D6.0-brightgreen&logo=dotnet&logoColor=brightgreen"> <img alt="WinUI3 Version" src="https://img.shields.io/nuget/v/DaoLang.WinUI3?color=green&label=Daolang.WinUI3%20Version&logo=nuget&logoColor=blue"> <img alt="DaoLang.WinUI3 Downloads" src="https://img.shields.io/nuget/dt/DaoLang.WinUI3?label=DaoLang.WinUI3%20Downloads&logo=nuget&logoColor=blue"> |
-| DaoLang.Avalonia                                             | * 待添加                                                     |
+| [DaoLang.WPF](https://www.nuget.org/packages/DaoLang.WPF)    | <img alt=".Net Version" src="https://img.shields.io/badge/.net-%3E%3D5.0-brightgreen&logo=dotnet&logoColor=brightgreen"> <img alt="Daolang.WPF Version" src="https://img.shields.io/nuget/v/DaoLang.WPF?color=yellow&label=Daolang.WPF%20Version&logo=nuget&logoColor=blue"> <img alt="DaoLang.WPF Downloads" src="https://img.shields.io/nuget/dt/DaoLang.WPF?color=blue&label=DaoLang.WPF%20Downloads&logo=nuget&logoColor=blue"> |
+| [DaoLang.WinUI3](https://www.nuget.org/packages/DaoLang.WinUI3) | <img alt=".Net Version" src="https://img.shields.io/badge/.net-%3E%3D6.0-brightgreen&logo=dotnet&logoColor=brightgreen"> <img alt="WinUI3 Version" src="https://img.shields.io/nuget/v/DaoLang.WinUI3?color=yellow&label=Daolang.WinUI3%20Version&logo=nuget&logoColor=blue"> <img alt="DaoLang.WinUI3 Downloads" src="https://img.shields.io/nuget/dt/DaoLang.WinUI3?color=blue&label=DaoLang.WinUI3%20Downloads&logo=nuget&logoColor=blue"> |
+| [DaoLang.Avalonia](https://www.nuget.org/packages/DaoLang.Avalonia) | <img alt=".Net Version" src="https://img.shields.io/badge/.net-%3E%3D5.0-brightgreen&logo=dotnet&logoColor=brightgreen"> <img alt="Avalonia Version" src="https://img.shields.io/nuget/v/DaoLang.Avalonia?color=green&label=Daolang.Avalonia%20Version&logo=nuget&logoColor=blue"> <img alt="DaoLang.Avalonia Downloads" src="https://img.shields.io/nuget/dt/DaoLang.Avalonia?color=blue&label=DaoLang.Avalonia%20Downloads&logo=nuget&logoColor=blue"> |
 | DaoLang.MAUI                                                 | * 待添加                                                     |
 | DaoLang.UWP                                                  | * 待添加                                                     |
 
@@ -142,14 +142,14 @@
 
 ### 注意事项
 
-* 由于Roslyn版本问题，**只能在Visual Studio 2022中使用**，过低版本无法识别Source Generators。
+* 由于Roslyn版本问题，**只能在Visual Studio 2022中使用**（或将来更高的版本中），过低版本无法识别Source Generators。
 * 资源类必须标注partial。
 * 词条字段必须为private static。
 
 ## Todo
 
-- [ ] 支持Avalonia
-- [ ] 支持Winform
+- [x] 支持WPF
+- [x] 支持Avalonia
 - [x] 支持WinUI 3
 - [ ] 支持MAUI
 - [ ] 支持UWP
