@@ -32,6 +32,5 @@
             <Button Content="{DynamicResource German}" Height="50" Width="200" Click="Button_German_Click"/>
             <Button Content="{DynamicResource Korean}" Height="50" Width="200" Click="Button_Korean_Click"/>
         </WrapPanel>
-
     </Grid>
 </Window>
