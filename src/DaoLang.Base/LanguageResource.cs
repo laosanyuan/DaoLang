@@ -14,6 +14,8 @@ using System.Windows;
 using Microsoft.UI.Xaml;
 #elif Avalonia
 using System.Collections.Generic;
+#elif MAUI
+using Microsoft.Maui.Controls;
 #endif
 
 namespace DaoLang

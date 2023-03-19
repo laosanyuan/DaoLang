@@ -1,0 +1,79 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>
+      netstandard2.0;
+      net6.0;
+      net6.0-android;
+      net6.0-ios;
+      net6.0-maccatalyst;
+      net7.0;
+      net7.0-android;
+      net7.0-ios;
+      net7.0-maccatalyst
+    </TargetFrameworks>
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">
+      $(TargetFrameworks);
+      net6.0-windows10.0.17763.0;
+      net6.0-windows10.0.18362.0;
+      net6.0-windows10.0.19041.0;
+      net6.0-windows10.0.20348.0;
+      net6.0-windows10.0.22000.0;
+      net6.0-windows10.0.22621.0;
+      net7.0-windows10.0.19041.0;
+      net7.0-windows10.0.20348.0;
+      net7.0-windows10.0.22000.0;
+      net7.0-windows10.0.22621.0
+    </TargetFrameworks>
+		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
+		<!-- <TargetFrameworks>$(TargetFrameworks);net7.0-tizen</TargetFrameworks> -->
+		<UseMaui>true</UseMaui>
+		<SingleProject>true</SingleProject>
+		<ImplicitUsings>disable</ImplicitUsings>
+
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+	</PropertyGroup>
+
+  <PropertyGroup>
+    <Title>DaoLang.MAUI</Title>
+    <Authors>1dao</Authors>
+    <Description>
+      用于管理MAUI程序国际化资源。通过自动生成源代码的方式减少开发人员的工作量、降低资源引用过程中人为因素导致异常的概率。
+      主要包含以下功能：
+      - 自动生成词条资源的通用模板属性和相关函数。
+      - 自动生成词条资源文件和指定输出位路径。
+      - 自动生成MAUI资源字典，方便绑定使用。
+    </Description>
+    <PakageTags>MAUI;dotnet;CSharp;Localization;Globalization</PakageTags>
+    <PackageIcon>content\logo.png</PackageIcon>
+    <PackageOutputPath>..\..\bin</PackageOutputPath>
+    <Version>1.0.1</Version>
+    <RepositoryUrl>https://github.com/laosanyuan/DaoLang</RepositoryUrl>
+    <PackageProjectUrl>https://www.nuget.org/packages/DaoLang.MAUI</PackageProjectUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
+    <DefineConstants>MAUI</DefineConstants>
+    <EnableTrimAnalyzer>false</EnableTrimAnalyzer>
+    <IsTrimmable>true</IsTrimmable>
+  </PropertyGroup>
+
+	<Import Project="..\DaoLang.Base\DaoLang.Base.projitems" Label="Shared" Condition="'$(TargetFramework)' != 'netstandard2.0'"/>
+  <Import Project="..\DaoLang.Shared\DaoLang.Shared.projitems" Label="Shared" />
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <ProjectReference Include="..\DaoLang.SourceGeneration\DaoLang.SourceGeneration.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup Label="Package">
+    <None Include="..\DaoLang.SourceGeneration\bin\$(Configuration)\netstandard2.0\DaoLang.SourceGeneration.dll" PackagePath="analyzers\dotnet\roslyn4.0\cs" Pack="true" Visible="false" />
+    <None Include="..\DaoLang.SourceGeneration\bin\$(Configuration)\netstandard2.0\DaoLang.SourceGeneration.dll" PackagePath="analyzers\dotnet\roslyn4.4\cs" Pack="true" Visible="false" />
+    <None Include="..\..\images\logo.png" Package="content" Pack="true" Visible="false" />
+  </ItemGroup>
+
+</Project>
