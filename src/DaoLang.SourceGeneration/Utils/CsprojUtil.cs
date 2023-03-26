@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using DaoLang.Shared.Enums;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 
-namespace DaoLang.SourceGenerators.Utils
+namespace DaoLang.SourceGeneration.Utils
 {
     internal static class CsprojUtil
     {
@@ -12,7 +15,11 @@ namespace DaoLang.SourceGenerators.Utils
         /// </summary>
         /// <param name="fileName"></param>
         /// <param name="outputFiles"></param>
-        public static void AddFileToOutput(string fileName, List<string> outputFiles)
+        /// <param name="generationType"></param>
+        public static void AddFileToOutput(
+            string fileName,
+            List<string> outputFiles,
+            FileGenerationType generationType = FileGenerationType.OutputDirectory)
         {
             if (!fileName.Contains(".csproj"))
             {
@@ -20,29 +27,34 @@ namespace DaoLang.SourceGenerators.Utils
             }
             var xmldoc = new XmlDocument();
             xmldoc.Load(fileName);
-            XmlNode targetNode = default!;
+            XmlNode? targetNode = default;
 
-            // 获取csproj文件中的有效ItemGroup，即包含资源文件元素的
+            // 获取csproj文件中的有效ItemGroup，即包含资源文件元素的节点
             var nodes = xmldoc.SelectNodes("//ItemGroup");
             if (nodes is not null)
             {
                 foreach (XmlNode item in nodes)
                 {
                     var update = item.FirstChild?.Attributes?["Update"];
+                    var include = item.FirstChild?.Attributes?["Include"];
 
-                    if (string.IsNullOrEmpty(update?.Value))
+                    if (string.IsNullOrEmpty(update?.Value) && string.IsNullOrEmpty(include?.Value))
                     {
                         continue;
                     }
 
-                    // 按文件名格式检查匹配
-                    if (!Regex.IsMatch(update!.Value, "^[\\w\\\\]+[\\.][\\w]{2}-[\\w]{2}.xml$"))
+                    var pattern = "^[\\w\\\\]+[\\.][\\w]{2}-[\\w]{2}.xml$";
+                    if (!string.IsNullOrEmpty(update?.Value) && Regex.IsMatch(update!.Value, pattern))
                     {
-                        continue;
+                        targetNode = item;
+                        break;
                     }
 
-                    targetNode = item;
-                    break;
+                    if (!string.IsNullOrEmpty(include?.Value) && Regex.IsMatch(include!.Value, pattern))
+                    {
+                        targetNode = item;
+                        break;
+                    }
                 }
             }
 
@@ -51,27 +63,14 @@ namespace DaoLang.SourceGenerators.Utils
             {
                 targetNode = xmldoc.CreateElement("ItemGroup");
                 var comment = xmldoc.CreateComment("本节点由DaoLang自动生成，请勿手动修改");
-                xmldoc.DocumentElement.AppendChild(comment);
-                xmldoc.DocumentElement.AppendChild(targetNode);
+                xmldoc.DocumentElement?.AppendChild(comment);
+                xmldoc.DocumentElement?.AppendChild(targetNode);
             }
 
-            // 已存在的不处理
-            foreach (XmlNode node in targetNode.ChildNodes)
-            {
-                if (outputFiles.Contains(node?.Attributes?["Update"]?.Value ?? string.Empty))
-                {
-                    outputFiles.Remove(node!.Attributes!["Update"]!.Value!);
-                }
-            }
+            targetNode.RemoveAll();
 
-            foreach (var file in outputFiles)
+            foreach (var element in outputFiles.Select(file => CreateLanguageElement(xmldoc, generationType, file)).Where(element => element != null))
             {
-                // 新增节点指定复制文件
-                var element = xmldoc.CreateElement("None");
-                element.SetAttribute("Update", file);
-                var child = xmldoc.CreateElement("CopyToOutputDirectory");
-                child.InnerText = "PreserveNewest";
-                element.AppendChild(child);
                 targetNode.AppendChild(element);
             }
 
@@ -81,6 +80,32 @@ namespace DaoLang.SourceGenerators.Utils
                 using var stream = new FileStream(fileName, FileMode.OpenOrCreate);
                 xmldoc.Save(stream);
             }
+        }
+
+        // 创建语言ItemGroup生成节点
+        private static XmlElement CreateLanguageElement(XmlDocument document, FileGenerationType type, string file)
+        {
+            XmlElement element = null;
+            switch (type)
+            {
+                case FileGenerationType.OutputDirectory:
+                    element = document.CreateElement("None");
+                    element.SetAttribute("Update", file);
+                    var childOutput = document.CreateElement("CopyToOutputDirectory");
+                    childOutput.InnerText = "PreserveNewest";
+                    element.AppendChild(childOutput);
+                    break;
+                case FileGenerationType.Embedded:
+                    element = document.CreateElement("EmbeddedResource");
+                    element.SetAttribute("Include", file);
+                    var childEmbedded = document.CreateElement("CopyToOutputDirectory");
+                    childEmbedded.InnerText = "Never";
+                    element.AppendChild(childEmbedded);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+            return element;
         }
     }
 }

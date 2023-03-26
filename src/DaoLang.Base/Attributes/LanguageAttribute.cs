@@ -24,12 +24,31 @@ namespace DaoLang.Attributes
         /// </summary>
         public string FileName { get; }
 
+        /// <summary>
+        /// 资源文件输出方式
+        /// </summary>
+        public FileGenerationType FileGenerationType { get; }
+
+#if MAUI
         public MainLanguageAttribute(string path, string fileName, LanguageType languageType)
         {
             LanguageType = languageType;
             Path = path;
             FileName = fileName;
         }
+#else
+        public MainLanguageAttribute(
+            string path,
+            string fileName,
+            LanguageType languageType,
+            FileGenerationType fileGenerationType = FileGenerationType.OutputDirectory)
+        {
+            LanguageType = languageType;
+            Path = path;
+            FileName = fileName;
+            FileGenerationType = fileGenerationType;
+        }
+#endif
     }
 
     /// <summary>

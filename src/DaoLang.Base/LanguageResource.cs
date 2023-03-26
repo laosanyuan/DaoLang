@@ -175,7 +175,7 @@ namespace DaoLang
                     LanguageType = language.LanguageType,
 #if Avalonia
                     Dictionary = language.ConvertToDictionary(MainSource),
-#elif WPF || WinUI3
+#elif WPF || WinUI3 || MAUI
                     ResourceDictionary = language.ConvertToResourceDictionary(MainSource)
 #endif
                 });

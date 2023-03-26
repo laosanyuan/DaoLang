@@ -1,18 +1,18 @@
-﻿using DaoLang.Shared.Enums;
-using DaoLang.Shared.Extensions;
-using DaoLang.Shared.Models;
-using DaoLang.Shared.Utils;
-using DaoLang.SourceGenerators.Components;
-using DaoLang.SourceGenerators.Utils;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using DaoLang.Shared.Enums;
+using DaoLang.Shared.Models;
+using DaoLang.Shared.Utils;
+using DaoLang.SourceGeneration.Utils;
+using DaoLang.SourceGenerators.Components;
+using DaoLang.SourceGenerators.Utils;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace DaoLang.SourceGenerators
+namespace DaoLang.SourceGeneration
 {
     [Generator(LanguageNames.CSharp)]
     public class FileSourceGenerator : IIncrementalGenerator
@@ -72,6 +72,9 @@ namespace DaoLang.SourceGenerators
             {
                 return;
             }
+
+            Debugger.Launch();
+
             // 遍历每个class
             foreach (var typeDeclarationSyntax in types)
             {
@@ -94,20 +97,33 @@ namespace DaoLang.SourceGenerators
                     continue;
                 }
 
-                var directory = (string)main.ConstructorArguments[0].Value;
-                var fileFlag = (string)main.ConstructorArguments[1].Value;
+                var directory = main.ConstructorArguments[0].Value as string;
+                var fileFlag = main.ConstructorArguments[1].Value as string;
                 var tmpType = main.ConstructorArguments[2].Value;
                 if (tmpType == null)
                 {
                     continue;
                 }
-
                 var type = (LanguageType)tmpType;
 
+                // 只有三个参数时，默认嵌入式
+                var generationType = FileGenerationType.Embedded;
+                if (main.ConstructorArguments.Length > 3)
+                {
+                    generationType = (FileGenerationType)(main.ConstructorArguments[3].Value ?? FileGenerationType.Embedded);
+                }
+
+                var info = new FileGenerationInfo()
+                {
+                    Directory = directory,
+                    FileFlag = fileFlag,
+                    MainLanguageType = type,
+                    FileGenerationType = generationType,
+                    CsprojFile = csprojFile,
+                };
+
                 // 字段内容更新
-                UpdateFields(typeDeclarationSyntax, typeSymbol, type, directory, fileFlag, csprojFile);
-                // 语言类别更新
-                UpdateLanguages(typeSymbol, directory, fileFlag, csprojFile);
+                UpdateFields(typeDeclarationSyntax, typeSymbol, info);
             }
         }
 
@@ -116,20 +132,14 @@ namespace DaoLang.SourceGenerators
         /// </summary>
         /// <param name="typeDeclarationSyntax"></param>
         /// <param name="typeSymbol"></param>
-        /// <param name="type"></param>
-        /// <param name="directory"></param>
-        /// <param name="fileFlag"></param>
-        /// <param name="csprojFile"></param>
+        /// <param name="info"></param>
         private static void UpdateFields(
-            TypeDeclarationSyntax typeDeclarationSyntax,
+            SyntaxNode typeDeclarationSyntax,
             INamespaceOrTypeSymbol typeSymbol,
-            LanguageType type,
-            string directory,
-            string fileFlag,
-            string csprojFile)
+            FileGenerationInfo info)
         {
             var valueDic = new Dictionary<string, string>();
-            var key = directory + fileFlag;
+            var key = info.Directory + info.FileFlag;
             // 获取文件中的目标类，针对同一文件中存在多个类的情况
             if (typeDeclarationSyntax.SyntaxTree.GetRoot().DescendantNodes()
                     .FirstOrDefault(t =>
@@ -140,20 +150,18 @@ namespace DaoLang.SourceGenerators
                             {
                                 return s.Attributes.Any(tmp =>
                                 {
-                                    if (tmp.ArgumentList?.Arguments.Count == 3 || tmp.ArgumentList?.Arguments.Count == 4)
+                                    if (tmp.ArgumentList?.Arguments.Count != 3 &&
+                                        tmp.ArgumentList?.Arguments.Count != 4)
                                     {
-                                        var folder = ((LiteralExpressionSyntax)tmp.ArgumentList.Arguments[0].Expression)
-                                            .Token
-                                            .ValueText;
-                                        var flag = ((LiteralExpressionSyntax)tmp.ArgumentList.Arguments[1].Expression)
-                                            .Token
-                                            .ValueText;
-                                        if ((folder + flag).Equals(key))
-                                        {
-                                            return true;
-                                        }
+                                        return false;
                                     }
-                                    return false;
+                                    var folder = ((LiteralExpressionSyntax)tmp.ArgumentList.Arguments[0].Expression)
+                                        .Token
+                                        .ValueText;
+                                    var flag = ((LiteralExpressionSyntax)tmp.ArgumentList.Arguments[1].Expression)
+                                        .Token
+                                        .ValueText;
+                                    return (folder + flag).Equals(key);
                                 });
                             });
                         }
@@ -163,10 +171,14 @@ namespace DaoLang.SourceGenerators
                 return;
             }
 
-            foreach (var member in classNode?.Members)
+            if (classNode?.Members != null)
             {
-                if (member is FieldDeclarationSyntax field)
+                foreach (var member in classNode.Members)
                 {
+                    if (member is not FieldDeclarationSyntax field)
+                    {
+                        continue;
+                    }
                     var fieldName = field.Declaration.Variables[0].Identifier.ValueText;
                     var fieldValue = ((LiteralExpressionSyntax)field.Declaration.Variables[0].Initializer.Value)
                         .Token
@@ -179,89 +191,33 @@ namespace DaoLang.SourceGenerators
             }
 
             // 更新全部文件
-            UpdateLanguageFiles(typeSymbol, type, directory, fileFlag, csprojFile, valueDic);
-        }
-
-        /// <summary>
-        /// 更新语言文件种类
-        /// </summary>
-        /// <param name="typeSymbol"></param>
-        /// <param name="reader"></param>
-        /// <param name="fileType"></param>
-        /// <param name="directory"></param>
-        /// <param name="fileFlag"></param>
-        /// <param name="csprojFile"></param>
-        private static void UpdateLanguages(
-            INamespaceOrTypeSymbol typeSymbol,
-            string directory,
-            string fileFlag,
-            string csprojFile)
-        {
-            var attributes = typeSymbol.GetAttributes();
-            var sources = new List<string>();
-            var languages = new List<LanguageType>();
-            var key = directory + fileFlag;
-            foreach (var attribute in attributes.Where(
-                         t => t.AttributeClass?.ToDisplayString()
-                             .Equals(SupportAttributes.SecondaryLanguageAttributeName) == true))
-            {
-                if (attribute.ConstructorArguments == null
-                    || attribute.ConstructorArguments.Length <= 0)
-                {
-                    continue;
-                }
-
-                var type = (LanguageType)attribute.ConstructorArguments[0].Value;
-                languages.Add(type);
-
-                var sourceName = SourceReader.GetFileName(directory, fileFlag, type);
-
-                sources.Add(sourceName);
-                // 生成新添加的副语言文件
-                GeneratorFile(
-                    typeSymbol,
-                    Path.Combine(Path.GetDirectoryName(csprojFile), sourceName),
-                    type);
-            }
-
-            if (sources.Count > 0)
-            {
-                // 更新.csproj文件
-                CsprojUtil.AddFileToOutput(csprojFile, sources);
-            }
+            UpdateLanguageFiles(typeSymbol, info, valueDic);
         }
 
         /// <summary>
         /// 字段集合更新,按类别更新资源
         /// </summary>
         /// <param name="typeSymbol"></param>
-        /// <param name="type"></param>
-        /// <param name="fileType"></param>
-        /// <param name="reader"></param>
-        /// <param name="directory"></param>
-        /// <param name="fileFlag"></param>
-        /// <param name="csprojFile"></param>
+        /// <param name="info"></param>
         /// <param name="fieldsValueDic"></param>
+        /// <param name="onlyUpdateMain"></param>
         /// <returns></returns>
         private static void UpdateLanguageFiles(
             INamespaceOrTypeSymbol typeSymbol,
-            LanguageType type,
-            string directory,
-            string fileFlag,
-            string csprojFile,
+            FileGenerationInfo info,
             Dictionary<string, string> fieldsValueDic,
             bool onlyUpdateMain = false)
         {
             var sources = new List<string>();
-            var sourceName = SourceReader.GetFileName(directory, fileFlag, type);
+            var sourceName = SourceReader.GetFileName(info.Directory, info.FileFlag, info.MainLanguageType);
             sources.Add(sourceName);
             var attributes = typeSymbol.GetAttributes();
 
             // 生成主语言文件
             GeneratorFile(
                 typeSymbol,
-                Path.Combine(Path.GetDirectoryName(csprojFile), sourceName),
-                type,
+                Path.Combine(Path.GetDirectoryName(info.CsprojFile), sourceName),
+                info.MainLanguageType,
                 fieldsValueDic,
                 true);
 
@@ -274,17 +230,17 @@ namespace DaoLang.SourceGenerators
             foreach (var attribute in attributes.Where(
                          t => t.AttributeClass?.ToDisplayString().Equals(SupportAttributes.SecondaryLanguageAttributeName) == true))
             {
-                type = (LanguageType)attribute.ConstructorArguments[0].Value!;
-                sourceName = SourceReader.GetFileName(directory, fileFlag, type);
+                var type = (LanguageType)attribute.ConstructorArguments[0].Value!;
+                sourceName = SourceReader.GetFileName(info.Directory, info.FileFlag, type);
                 sources.Add(sourceName);
                 GeneratorFile(
                     typeSymbol,
-                    Path.Combine(Path.GetDirectoryName(csprojFile)!, sourceName),
+                    Path.Combine(Path.GetDirectoryName(info.CsprojFile)!, sourceName),
                     type);
             }
 
             // 更新.csproj文件
-            CsprojUtil.AddFileToOutput(csprojFile, sources);
+            CsprojUtil.AddFileToOutput(info.CsprojFile, sources, info.FileGenerationType);
         }
 
         /// <summary>
@@ -294,6 +250,7 @@ namespace DaoLang.SourceGenerators
         /// <param name="fileName">资源文件名称</param>
         /// <param name="type">语言类型</param>
         /// <param name="defalutValue">主语言默认字段值</param>
+        /// <param name="isMainLanguage">是否为主语言</param>
         private static void GeneratorFile(
             INamespaceOrTypeSymbol typeSymbol,
             string fileName,
@@ -335,6 +292,17 @@ namespace DaoLang.SourceGenerators
             }
 
             SourceReader.Save(result, fileName);
+        }
+        #endregion
+
+        #region  [Classes]
+        internal record FileGenerationInfo
+        {
+            public string Directory { get; set; } = null!;
+            public string FileFlag { get; set; } = null!;
+            public string CsprojFile { get; set; } = null!;
+            public LanguageType MainLanguageType { get; set; }
+            public FileGenerationType FileGenerationType { get; set; }
         }
         #endregion
     }
