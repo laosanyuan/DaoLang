@@ -12,7 +12,7 @@ namespace DaoLang.Extensions
         public static string GetCommonName(this LanguageType languaeType)
         {
             var tmp = languaeType.ToString();
-            return tmp.ToLower().Replace('_', '-');
+            return tmp.ToLower();
         }
     }
 }

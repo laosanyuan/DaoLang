@@ -3,6 +3,8 @@ using DaoLang.Shared.Enums;
 using DaoLang.Shared.Models;
 using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -55,6 +57,38 @@ namespace DaoLang.Shared.Utils
                 }
             }
 
+            return false;
+        }
+
+        public static bool Load(Assembly assembly, string sourceName, out Language language)
+        {
+            language = default;
+
+            try
+            {
+                if (assembly.GetManifestResourceNames()?.Contains(sourceName) == true)
+                {
+                    using (var stream = assembly.GetManifestResourceStream(sourceName))
+                    {
+                        if (stream != null)
+                        {
+                            using (var reader = new StreamReader(stream))
+                            {
+                                var xmlSerializer = new XmlSerializer(typeof(Language));
+                                language = xmlSerializer.Deserialize(reader) as Language;
+                                if (language != null)
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // TODO 保存备份资源文件
+            }
             return false;
         }
 

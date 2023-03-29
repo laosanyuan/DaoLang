@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using DaoLang.Shared.Enums;
+﻿using DaoLang.Shared.Enums;
 using DaoLang.Shared.Models;
 using DaoLang.Shared.Utils;
 using DaoLang.SourceGeneration.Utils;
@@ -11,6 +6,10 @@ using DaoLang.SourceGenerators.Components;
 using DaoLang.SourceGenerators.Utils;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.IO;
+using System.Linq;
 
 namespace DaoLang.SourceGeneration
 {
@@ -72,8 +71,6 @@ namespace DaoLang.SourceGeneration
             {
                 return;
             }
-
-            Debugger.Launch();
 
             // 遍历每个class
             foreach (var typeDeclarationSyntax in types)
@@ -171,22 +168,21 @@ namespace DaoLang.SourceGeneration
                 return;
             }
 
-            if (classNode?.Members != null)
+            foreach (var member in classNode.Members)
             {
-                foreach (var member in classNode.Members)
+                if (member is not FieldDeclarationSyntax field)
                 {
-                    if (member is not FieldDeclarationSyntax field)
-                    {
-                        continue;
-                    }
-                    var fieldName = field.Declaration.Variables[0].Identifier.ValueText;
-                    var fieldValue = ((LiteralExpressionSyntax)field.Declaration.Variables[0].Initializer.Value)
-                        .Token
-                        .ValueText;
-                    if (fieldName != null && !valueDic.ContainsKey(fieldName))
-                    {
-                        valueDic.Add(fieldName, fieldValue);
-                    }
+                    continue;
+                }
+                var fieldName = field.Declaration.Variables[0].Identifier.ValueText;
+                var fieldValue = (field.Declaration.Variables[0].Initializer?.Value as LiteralExpressionSyntax)
+                    ?.Token
+                    .ValueText;
+                if (!string.IsNullOrEmpty(fieldName)
+                    && !valueDic.ContainsKey(fieldName)
+                    && fieldValue != null)
+                {
+                    valueDic.Add(fieldName, fieldValue);
                 }
             }
 
