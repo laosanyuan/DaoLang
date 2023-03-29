@@ -24,19 +24,21 @@
 
 ## 版本详情
 
-| Name                                                         | Details                                                      |
-| :----------------------------------------------------------- | ------------------------------------------------------------ |
-| [DaoLang.WPF](https://www.nuget.org/packages/DaoLang.WPF)    | <img alt=".Net Version" src="https://img.shields.io/badge/.net-%3E%3D5.0-brightgreen&logo=dotnet&logoColor=brightgreen"> <img alt="Daolang.WPF Version" src="https://img.shields.io/nuget/v/DaoLang.WPF?color=yellow&label=Daolang.WPF%20Version&logo=nuget&logoColor=blue"> <img alt="DaoLang.WPF Downloads" src="https://img.shields.io/nuget/dt/DaoLang.WPF?color=blue&label=DaoLang.WPF%20Downloads&logo=nuget&logoColor=blue"> |
-| [DaoLang.WinUI3](https://www.nuget.org/packages/DaoLang.WinUI3) | <img alt=".Net Version" src="https://img.shields.io/badge/.net-%3E%3D6.0-brightgreen&logo=dotnet&logoColor=brightgreen"> <img alt="WinUI3 Version" src="https://img.shields.io/nuget/v/DaoLang.WinUI3?color=yellow&label=Daolang.WinUI3%20Version&logo=nuget&logoColor=blue"> <img alt="DaoLang.WinUI3 Downloads" src="https://img.shields.io/nuget/dt/DaoLang.WinUI3?color=blue&label=DaoLang.WinUI3%20Downloads&logo=nuget&logoColor=blue"> |
-| [DaoLang.Avalonia](https://www.nuget.org/packages/DaoLang.Avalonia) | <img alt=".Net Version" src="https://img.shields.io/badge/.net-%3E%3D5.0-brightgreen&logo=dotnet&logoColor=brightgreen"> <img alt="Avalonia Version" src="https://img.shields.io/nuget/v/DaoLang.Avalonia?color=yellow&label=Daolang.Avalonia%20Version&logo=nuget&logoColor=blue"> <img alt="DaoLang.Avalonia Downloads" src="https://img.shields.io/nuget/dt/DaoLang.Avalonia?color=blue&label=DaoLang.Avalonia%20Downloads&logo=nuget&logoColor=blue"> |
-| DaoLang.MAUI                                                 | * 待添加                                                     |
-| DaoLang.UWP                                                  | * 待添加                                                     |
+| 名称                                                         | 详情                                                         | 支持语言文件类别 |
+| :----------------------------------------------------------- | ------------------------------------------------------------ | ---------------- |
+| [DaoLang.WPF](https://www.nuget.org/packages/DaoLang.WPF)    | <img alt=".Net Version" src="https://img.shields.io/badge/.net-%3E%3D5.0-brightgreen&logo=dotnet&logoColor=brightgreen"> <img alt="Daolang.WPF Version" src="https://img.shields.io/nuget/v/DaoLang.WPF?color=yellow&label=Daolang.WPF%20Version&logo=nuget&logoColor=blue"> <img alt="DaoLang.WPF Downloads" src="https://img.shields.io/nuget/dt/DaoLang.WPF?color=blue&label=DaoLang.WPF%20Downloads&logo=nuget&logoColor=blue"> | 嵌入式、输出     |
+| [DaoLang.WinUI3](https://www.nuget.org/packages/DaoLang.WinUI3) | <img alt=".Net Version" src="https://img.shields.io/badge/.net-%3E%3D6.0-brightgreen&logo=dotnet&logoColor=brightgreen"> <img alt="WinUI3 Version" src="https://img.shields.io/nuget/v/DaoLang.WinUI3?color=yellow&label=Daolang.WinUI3%20Version&logo=nuget&logoColor=blue"> <img alt="DaoLang.WinUI3 Downloads" src="https://img.shields.io/nuget/dt/DaoLang.WinUI3?color=blue&label=DaoLang.WinUI3%20Downloads&logo=nuget&logoColor=blue"> | 嵌入式、输出     |
+| [DaoLang.Avalonia](https://www.nuget.org/packages/DaoLang.Avalonia) | <img alt=".Net Version" src="https://img.shields.io/badge/.net-%3E%3D5.0-brightgreen&logo=dotnet&logoColor=brightgreen"> <img alt="Avalonia Version" src="https://img.shields.io/nuget/v/DaoLang.Avalonia?color=yellow&label=Daolang.Avalonia%20Version&logo=nuget&logoColor=blue"> <img alt="DaoLang.Avalonia Downloads" src="https://img.shields.io/nuget/dt/DaoLang.Avalonia?color=blue&label=DaoLang.Avalonia%20Downloads&logo=nuget&logoColor=blue"> | 嵌入式、输出     |
+| [DaoLang.MAUI](https://www.nuget.org/packages/DaoLang.MAUI)  | <img alt=".Net Version" src="https://img.shields.io/badge/.net-%3E%3D6.0-brightgreen&logo=dotnet&logoColor=brightgreen"> <img alt="Avalonia Version" src="https://img.shields.io/nuget/v/DaoLang.MAUI?color=yellow&label=Daolang.MAUI%20Version&logo=nuget&logoColor=blue"> <img alt="DaoLang.MAUI Downloads" src="https://img.shields.io/nuget/dt/DaoLang.MAUI?color=blue&label=DaoLang.MAUI%20Downloads&logo=nuget&logoColor=blue"> | 嵌入式           |
+
+注： 以上表格中“支持语言文件类别”一项中，嵌入式意为将生成的语言资源文件编译到程序中作为嵌入式资源的一部分、输出意为以文件的形式复制到程序的运行目录中。
 
 ## 功能
 
 * 按语言自动生成国际化/本地化资源字典文件并补齐文件内容，无需人工同步。
 * 自动生成词条属性、绑定属性Key、注释，可以在程序中直接使用，无需通过key获取的方式使用词条内容。
 * 指定文件输出路径及文件名称。
+* 指定语言文件的管理方式。
 * 支持切换语言，语言切换失败（如资源文件不存在）时，自动使用默认语言，避免程序崩溃。
 
 ## 基本概念
@@ -151,7 +153,6 @@
 - [x] 支持WPF
 - [x] 支持Avalonia
 - [x] 支持WinUI 3
-- [ ] 支持MAUI
-- [ ] 支持UWP
+- [x] 支持MAUI
 - [ ] 开发VS插件资源文件管理工具
 - [ ] 添加语言被删除同步时删除资源文件和项目文件复制输出标记功能
