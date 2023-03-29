@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-16"?>
+<Language xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <LanguageType>EN_US</LanguageType>
+  <IsMainLanguage>true</IsMainLanguage>
+  <Items>
+    <LanguageItem Key="Chinese" Content="Chinese" />
+    <LanguageItem Key="ChineseTw" Content="Chinese TW" />
+    <LanguageItem Key="English" Content="English" />
+    <LanguageItem Key="Arab" Content="Arab" />
+    <LanguageItem Key="Japanese" Content="Japanese" />
+    <LanguageItem Key="Korean" Content="Korean" />
+    <LanguageItem Key="German" Content="German" />
+  </Items>
+</Language>

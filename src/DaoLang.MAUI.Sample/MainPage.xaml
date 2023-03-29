@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:DaoLang.MAUI.Sample"
+             x:Class="DaoLang.MAUI.Sample.MainPage">
+    <ScrollView>
+        <VerticalStackLayout Spacing="15" Padding="30,20,30,0" VerticalOptions="Start">
+            <StackLayout Orientation="Vertical" Spacing="10" HorizontalOptions="Center">
+                <Label Text="{DynamicResource {x:Static local:Localization.EnglishKey}}"/>
+                <Label Text="{DynamicResource {x:Static local:Localization.ChineseKey}}"/>
+                <Label Text="{DynamicResource {x:Static local:Localization.ChineseTwKey}}"/>
+                <Label Text="{DynamicResource {x:Static local:Localization.ArabKey}}"/>
+                <Label Text="{DynamicResource {x:Static local:Localization.JapaneseKey}}"/>
+                <Label Text="{DynamicResource {x:Static local:Localization.GermanKey}}"/>
+                <Label Text="{DynamicResource {x:Static local:Localization.KoreanKey}}"/>
+            </StackLayout>
+
+            <StackLayout Orientation="Vertical" Spacing="5" Padding="30,30,30,10" HorizontalOptions="Center">
+                <Button Text="{DynamicResource {x:Static local:Localization.EnglishKey}}" 
+                        Clicked="Button_Click"/>
+                <Button Text="{DynamicResource {x:Static local:Localization.ChineseKey}}" 
+                        Clicked="Button_English_Click"/>
+                <Button Text="{DynamicResource {x:Static local:Localization.ChineseTwKey}}" 
+                        Clicked="Button_TW_Click"/>
+                <Button Text="{DynamicResource {x:Static local:Localization.ArabKey}}" 
+                        Clicked="Button_Arab_Click"/>
+                <Button Text="{DynamicResource {x:Static local:Localization.JapaneseKey}}" 
+                        Clicked="Button_Korean_Click"/>
+                <Button Text="{DynamicResource {x:Static local:Localization.GermanKey}}" 
+                        Clicked="Button_German_Click"/>
+                <Button Text="{DynamicResource {x:Static local:Localization.KoreanKey}}" 
+                        Clicked="Button_Japanese_Click"/>
+            </StackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
