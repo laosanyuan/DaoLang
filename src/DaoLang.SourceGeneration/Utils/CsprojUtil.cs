@@ -43,7 +43,7 @@ namespace DaoLang.SourceGeneration.Utils
                         continue;
                     }
 
-                    var pattern = "^[\\w\\\\]+[\\.][\\w]{2}-[\\w]{2}.xml$";
+                    var pattern = "^[\\w\\\\]+[\\.][\\w]{2}_[\\w]{2}.xml$";
                     if (!string.IsNullOrEmpty(update?.Value) && Regex.IsMatch(update!.Value, pattern))
                     {
                         targetNode = item;
@@ -85,7 +85,7 @@ namespace DaoLang.SourceGeneration.Utils
         // 创建语言ItemGroup生成节点
         private static XmlElement CreateLanguageElement(XmlDocument document, FileGenerationType type, string file)
         {
-            XmlElement element = null;
+            XmlElement element = null!;
             switch (type)
             {
                 case FileGenerationType.OutputDirectory:
@@ -98,9 +98,6 @@ namespace DaoLang.SourceGeneration.Utils
                 case FileGenerationType.Embedded:
                     element = document.CreateElement("EmbeddedResource");
                     element.SetAttribute("Include", file);
-                    var childEmbedded = document.CreateElement("CopyToOutputDirectory");
-                    childEmbedded.InnerText = "Never";
-                    element.AppendChild(childEmbedded);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);

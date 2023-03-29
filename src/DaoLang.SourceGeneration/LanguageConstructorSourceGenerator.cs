@@ -1,13 +1,13 @@
-﻿using DaoLang.Shared.Enums;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using DaoLang.Shared.Enums;
+using DaoLang.SourceGenerators.Components;
 using DaoLang.SourceGenerators.Utils;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using DaoLang.SourceGenerators.Components;
 
-namespace DaoLang.SourceGenerators
+namespace DaoLang.SourceGeneration
 {
     /// <summary>
     /// 语言资源构造函数生成器
@@ -102,6 +102,12 @@ namespace DaoLang.SourceGenerators
             {
                 return string.Empty;
             }
+            // 主语言信息
+            var mainInfo = ParseMainLanguageAttribute(main);
+            if (mainInfo is null)
+            {
+                return string.Empty;
+            }
 
             // 获取副语言并去重
             attributeList.Remove(main);
@@ -138,9 +144,10 @@ namespace DaoLang.SourceGenerators
         public static void Init()
         {{
             SourceType = typeof({name});
-            Folder = @""{main.ConstructorArguments[0].Value}"";
-            FileFlag = ""{main.ConstructorArguments[1].Value}"";
-            MainLanguage = LanguageType.{(LanguageType)(main.ConstructorArguments[2].Value ?? 0)};
+            Folder = @""{mainInfo.Folder}"";
+            FileFlag = ""{mainInfo.FileFlag}"";
+            MainLanguage = LanguageType.{mainInfo.LanguageType};
+            FileGenerationType = FileGenerationType.{mainInfo.FileGenerationType};
             {secondaryStr}
         
             SetMainLanguage();
@@ -150,6 +157,44 @@ namespace DaoLang.SourceGenerators
 
             var namespaceNames = namespaces.Aggregate("", (current, ns) => current + $"using {ns};{CodePart.Enter}");
             return namespaceNames + CodePart.Enter + body;
+        }
+
+        /// <summary>
+        /// 解析主语言信息
+        /// </summary>
+        /// <param name="attributeData"></param>
+        /// <returns></returns>
+        private static MainLanguageInfo ParseMainLanguageAttribute(AttributeData attributeData)
+        {
+            if (attributeData.ConstructorArguments.Length >= 3)
+            {
+                var info = new MainLanguageInfo
+                {
+                    Folder = attributeData.ConstructorArguments[0].Value?.ToString(),
+                    FileFlag = attributeData.ConstructorArguments[1].Value?.ToString(),
+                    LanguageType = (LanguageType)(attributeData.ConstructorArguments[2].Value ?? 0)
+                };
+                if (attributeData.ConstructorArguments.Length > 3)
+                {
+                    info.FileGenerationType = (FileGenerationType)(attributeData.ConstructorArguments[3].Value ?? 0);
+                }
+                else
+                {
+                    info.FileGenerationType = FileGenerationType.Embedded;
+                }
+
+                return info;
+            }
+
+            return default;
+        }
+
+        internal class MainLanguageInfo
+        {
+            public FileGenerationType FileGenerationType { get; set; }
+            public LanguageType LanguageType { get; set; }
+            public string FileFlag { get; set; } = string.Empty;
+            public string Folder { get; set; } = string.Empty;
         }
     }
 }

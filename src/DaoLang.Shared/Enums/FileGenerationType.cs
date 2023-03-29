@@ -1,5 +1,8 @@
 ﻿namespace DaoLang.Shared.Enums
 {
+    /// <summary>
+    /// 语言文件生成方式
+    /// </summary>
     public enum FileGenerationType
     {
         /// <summary>

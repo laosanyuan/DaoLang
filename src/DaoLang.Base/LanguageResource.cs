@@ -47,6 +47,10 @@ namespace DaoLang
         /// 主语言资源
         /// </summary>
         protected static Language MainSource;
+        /// <summary>
+        /// 资源文件生成方式
+        /// </summary>
+        protected static FileGenerationType FileGenerationType;
         #endregion
 
         #region [Events]
@@ -65,14 +69,20 @@ namespace DaoLang
         /// <returns></returns>
         public static bool SetLanguage(LanguageType language)
         {
+            Assembly callingAssembly = null;
+            if (FileGenerationType == FileGenerationType.Embedded)
+            {
+                callingAssembly = Assembly.GetCallingAssembly();
+            }
+
             if (SecondaryLanguages?.Contains(language) == true)
             {
                 MainSource ??= PropertyToSource(MainLanguage);
-                LoadLanguageSource(language);
+                LoadLanguageSource(language, callingAssembly);
             }
             else
             {
-                SetMainLanguage();
+                LoadLanguageSource(MainLanguage, callingAssembly);
             }
             return false;
         }
@@ -80,7 +90,17 @@ namespace DaoLang
         /// <summary>
         /// 设置为主语言
         /// </summary>
-        public static void SetMainLanguage() => LoadLanguageSource(MainLanguage);
+        public static void SetMainLanguage()
+        {
+            if (FileGenerationType == FileGenerationType.Embedded)
+            {
+                LoadLanguageSource(MainLanguage, Assembly.GetCallingAssembly());
+            }
+            else
+            {
+                LoadLanguageSource(MainLanguage);
+            }
+        }
         #endregion
 
         #region [Private Methods]
@@ -109,6 +129,20 @@ namespace DaoLang
         {
             var fileName = Path.Combine(Folder, $"{FileFlag}.{languageType.GetCommonName()}.xml");
             return Path.Combine(Environment.CurrentDirectory, fileName);
+        }
+
+        /// <summary>
+        /// 获取嵌入式资源文件名称
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <param name="languageType"></param>
+        /// <returns></returns>
+        protected static string GetSourceFileName(Assembly assembly, LanguageType languageType)
+        {
+            var fullName = assembly.FullName;
+            var targetName = fullName.Split(",")[0];
+            var tmpFolder = Folder.Replace("\\", ".");
+            return $"{targetName}.{tmpFolder}.{FileFlag}.{languageType.GetCommonName()}.xml";
         }
 
         /// <summary>
@@ -162,21 +196,44 @@ namespace DaoLang
         /// 加载语言资源文件
         /// </summary>
         /// <param name="languageType"></param>
+        /// <param name="callingAssembly"></param>
         /// <returns></returns>
-        protected static bool LoadLanguageSource(LanguageType languageType)
+        protected static bool LoadLanguageSource(LanguageType languageType, Assembly callingAssembly = null)
         {
-            var fileName = GetSourceFileName(languageType);
-            if (SourceReader.Load(fileName, out var language))
+            Language result = null;
+            switch (FileGenerationType)
             {
-                SourceToProperty(language);
+                case FileGenerationType.Embedded when callingAssembly != null:
+                    {
+                        var sourceName = GetSourceFileName(callingAssembly, languageType);
+                        if (SourceReader.Load(callingAssembly, sourceName, out var embeddedLanguage))
+                        {
+                            result = embeddedLanguage;
+                        }
+                        break;
+                    }
+                case FileGenerationType.OutputDirectory:
+                    {
+                        var fileName = GetSourceFileName(languageType);
+                        if (SourceReader.Load(fileName, out var copyLanguage))
+                        {
+                            result = copyLanguage;
+                        }
+                        break;
+                    }
+            }
+
+            if (result != null)
+            {
+                SourceToProperty(result);
                 // 通知WPF程序资源变更，当前语言结合主语言
                 LanguageChanged?.Invoke(new LanguageEventArgs()
                 {
-                    LanguageType = language.LanguageType,
+                    LanguageType = result.LanguageType,
 #if Avalonia
                     Dictionary = language.ConvertToDictionary(MainSource),
 #elif WPF || WinUI3 || MAUI
-                    ResourceDictionary = language.ConvertToResourceDictionary(MainSource)
+                    ResourceDictionary = result.ConvertToResourceDictionary(MainSource)
 #endif
                 });
                 return true;
