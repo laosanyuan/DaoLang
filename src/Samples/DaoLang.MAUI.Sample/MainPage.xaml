@@ -17,9 +17,9 @@
 
             <StackLayout Orientation="Vertical" Spacing="5" Padding="30,30,30,10" HorizontalOptions="Center">
                 <Button Text="{DynamicResource {x:Static local:Localization.EnglishKey}}" 
-                        Clicked="Button_Click"/>
-                <Button Text="{DynamicResource {x:Static local:Localization.ChineseKey}}" 
                         Clicked="Button_English_Click"/>
+                <Button Text="{DynamicResource {x:Static local:Localization.ChineseKey}}" 
+                        Clicked="Button_Click"/>
                 <Button Text="{DynamicResource {x:Static local:Localization.ChineseTwKey}}" 
                         Clicked="Button_TW_Click"/>
                 <Button Text="{DynamicResource {x:Static local:Localization.ArabKey}}" 

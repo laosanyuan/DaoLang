@@ -63,7 +63,7 @@
     <IsTrimmable>true</IsTrimmable>
   </PropertyGroup>
 
-	<Import Project="..\DaoLang.Base\DaoLang.Base.projitems" Label="Shared" Condition="'$(TargetFramework)' != 'netstandard2.0'"/>
+  <Import Project="..\DaoLang.Base\DaoLang.Base.projitems" Label="Shared" Condition="'$(TargetFramework)' != 'netstandard2.0'"/>
   <Import Project="..\DaoLang.Shared\DaoLang.Shared.projitems" Label="Shared" />
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

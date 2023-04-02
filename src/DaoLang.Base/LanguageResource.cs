@@ -140,7 +140,7 @@ namespace DaoLang
         protected static string GetSourceFileName(Assembly assembly, LanguageType languageType)
         {
             var fullName = assembly.FullName;
-            var targetName = fullName.Split(",")[0];
+            var targetName = fullName?.Split(",")[0];
             var tmpFolder = Folder.Replace("\\", ".");
             return $"{targetName}.{tmpFolder}.{FileFlag}.{languageType.GetCommonName()}.xml";
         }
@@ -221,6 +221,8 @@ namespace DaoLang
                         }
                         break;
                     }
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             if (result != null)
@@ -231,9 +233,9 @@ namespace DaoLang
                 {
                     LanguageType = result.LanguageType,
 #if Avalonia
-                    Dictionary = language.ConvertToDictionary(MainSource),
-#elif WPF || WinUI3 || MAUI
-                    ResourceDictionary = result.ConvertToResourceDictionary(MainSource)
+                    Dictionary = result.ConvertToDictionary(MainSource),
+#else
+                    ResourceDictionary = result.ConvertToResourceDictionary(MainSource),
 #endif
                 });
                 return true;

@@ -22,30 +22,35 @@
     <PackageReference Include="Avalonia.Desktop" Version="0.10.18" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.18" />
-    <PackageReference Include="DaoLang.Avalonia" Version="1.0.0" />
+    <!--<PackageReference Include="DaoLang.Avalonia" Version="1.0.1" />-->
     <PackageReference Include="XamlNameReferenceGenerator" Version="1.3.4" />
+  </ItemGroup>
+  <!--调试DaoLang使用-->
+  <ItemGroup>
+    <ProjectReference Include="..\..\DaoLang.Avalonia\DaoLang.Avalonia.csproj" />
+    <ProjectReference Include="..\..\DaoLang.SourceGeneration\DaoLang.SourceGeneration.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
   <!--本节点由DaoLang自动生成，请勿手动修改-->
   <ItemGroup>
-    <None Update="Source\Language.en-us.xml">
+    <None Update="Source\Language.en_us.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Source\Language.zh-cn.xml">
+    <None Update="Source\Language.zh_cn.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Source\Language.zh-tw.xml">
+    <None Update="Source\Language.zh_tw.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Source\Language.ar-sa.xml">
+    <None Update="Source\Language.ar_sa.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Source\Language.ko-kr.xml">
+    <None Update="Source\Language.ko_kr.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Source\Language.ja-jp.xml">
+    <None Update="Source\Language.ja_jp.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Source\Language.de-de.xml">
+    <None Update="Source\Language.de_de.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

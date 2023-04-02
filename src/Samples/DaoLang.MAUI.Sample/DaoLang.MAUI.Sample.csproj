@@ -37,9 +37,13 @@
     <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
     <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
+  <!--调试DaoLang使用-->
+  <!--<ItemGroup>
+    <ProjectReference Include="..\..\DaoLang.MAUI\DaoLang.MAUI.csproj" />
+    <ProjectReference Include="..\..\DaoLang.SourceGeneration\DaoLang.SourceGeneration.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>-->
   <ItemGroup>
-    <ProjectReference Include="..\DaoLang.MAUI\DaoLang.MAUI.csproj" />
-    <ProjectReference Include="..\DaoLang.SourceGeneration\DaoLang.SourceGeneration.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <PackageReference Include="DaoLang.MAUI" Version="1.0.0" />
   </ItemGroup>
   <!--本节点由DaoLang自动生成，请勿手动修改-->
   <ItemGroup>

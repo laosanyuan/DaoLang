@@ -34,7 +34,7 @@
     <PakageTags>WinUI3;dotnet;CSharp;Localization;Globalization</PakageTags>
     <PackageIcon>content\logo.png</PackageIcon>
     <PackageOutputPath>..\..\bin</PackageOutputPath>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <RepositoryUrl>https://github.com/laosanyuan/DaoLang</RepositoryUrl>
     <PackageProjectUrl>https://www.nuget.org/packages/DaoLang.WinUI3</PackageProjectUrl>
   </PropertyGroup>
