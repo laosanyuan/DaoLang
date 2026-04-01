@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <DefineConstants>WPF</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="DaoLang.WPF" Version="1.0.0" />
+    <PackageReference Include="DaoLang.WPF" Version="1.0.1" />
   </ItemGroup>
   <!--调试DaoLang.WPF使用-->
   <!--<ItemGroup>
