@@ -25,11 +25,19 @@ namespace DaoLang.SourceGeneration
                     static (ctx, _) => GetSemanticTargetForGeneration(ctx))
                 .Where(static m => m is not null)!;
 
+            var isDesignTimeBuildProvider = context.AnalyzerConfigOptionsProvider.Select(
+                static (optionsProvider, _) =>
+                    optionsProvider.GlobalOptions.TryGetValue("build_property.DesignTimeBuild", out var value)
+                    && bool.TryParse(value, out var isDesignTimeBuild)
+                    && isDesignTimeBuild);
+
             IncrementalValueProvider<(Compilation Compilation, ImmutableArray<TypeDeclarationSyntax> TypeDeclarationSyntaxes)> compilationAndTypes =
                 context.CompilationProvider.Combine(typeDeclarations.Collect());
 
-            context.RegisterSourceOutput(compilationAndTypes, static (spc, source) =>
-                Execute(source.Compilation, source.TypeDeclarationSyntaxes, spc));
+            var pipeline = compilationAndTypes.Combine(isDesignTimeBuildProvider);
+
+            context.RegisterSourceOutput(pipeline, static (spc, source) =>
+                Execute(source.Left.Compilation, source.Left.TypeDeclarationSyntaxes, source.Right, spc));
         }
 
         #region [Private Methods]
@@ -67,6 +75,7 @@ namespace DaoLang.SourceGeneration
         private static void Execute(
             Compilation compilation,
             ImmutableArray<TypeDeclarationSyntax> types,
+            bool isDesignTimeBuild,
             SourceProductionContext context)
         {
             if (types.IsDefaultOrEmpty)
@@ -122,7 +131,7 @@ namespace DaoLang.SourceGeneration
                 };
 
                 // 字段内容更新
-                UpdateFields(typeDeclarationSyntax, typeSymbol, semanticModel, info, context);
+                UpdateFields(typeDeclarationSyntax, typeSymbol, semanticModel, info, isDesignTimeBuild, context);
             }
         }
 
@@ -137,6 +146,7 @@ namespace DaoLang.SourceGeneration
             INamespaceOrTypeSymbol typeSymbol,
             SemanticModel semanticModel,
             FileGenerationInfo info,
+            bool isDesignTimeBuild,
             SourceProductionContext context)
         {
             var valueDic = new Dictionary<string, string>();
@@ -194,7 +204,7 @@ namespace DaoLang.SourceGeneration
             }
 
             // 更新全部文件
-            UpdateLanguageFiles(typeSymbol, info, valueDic);
+            UpdateLanguageFiles(typeSymbol, info, valueDic, isDesignTimeBuild);
         }
 
         /// <summary>
@@ -209,8 +219,14 @@ namespace DaoLang.SourceGeneration
             INamespaceOrTypeSymbol typeSymbol,
             FileGenerationInfo info,
             Dictionary<string, string> fieldsValueDic,
+            bool isDesignTimeBuild,
             bool onlyUpdateMain = false)
         {
+            if (isDesignTimeBuild)
+            {
+                return;
+            }
+
             var sources = new List<string>();
             var sourceName = SourceReader.GetFileName(info.Directory, info.FileFlag, info.MainLanguageType);
             sources.Add(sourceName);

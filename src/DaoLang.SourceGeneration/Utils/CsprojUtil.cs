@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Text;
 using System.Xml;
 
 namespace DaoLang.SourceGeneration.Utils
@@ -43,7 +44,7 @@ namespace DaoLang.SourceGeneration.Utils
                         continue;
                     }
 
-                    var pattern = "^[\\w\\\\]+[\\.][\\w]{2}_[\\w]{2}.xml$";
+                    var pattern = "^[\\w\\\\]+[\\.][\\w]{2}([_-])[\\w]{2}.xml$";
                     if (!string.IsNullOrEmpty(update?.Value) && Regex.IsMatch(update!.Value, pattern))
                     {
                         targetNode = item;
@@ -77,8 +78,17 @@ namespace DaoLang.SourceGeneration.Utils
             // 保存更新
             if (outputFiles.Count > 0)
             {
-                using var stream = new FileStream(fileName, FileMode.OpenOrCreate);
-                xmldoc.Save(stream);
+                var updatedContent = SerializeXmlDocument(xmldoc);
+                var existingContent = File.Exists(fileName)
+                    ? File.ReadAllText(fileName)
+                    : string.Empty;
+
+                if (string.Equals(existingContent, updatedContent, StringComparison.Ordinal))
+                {
+                    return;
+                }
+
+                File.WriteAllText(fileName, updatedContent, new UTF8Encoding(false));
             }
         }
 
@@ -103,6 +113,22 @@ namespace DaoLang.SourceGeneration.Utils
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
             return element;
+        }
+
+        private static string SerializeXmlDocument(XmlDocument document)
+        {
+            using var stream = new MemoryStream();
+            using var xmlWriter = XmlWriter.Create(stream, new XmlWriterSettings
+            {
+                Indent = true,
+                OmitXmlDeclaration = false,
+                Encoding = new UTF8Encoding(false)
+            });
+            document.Save(xmlWriter);
+            xmlWriter.Flush();
+            stream.Position = 0;
+            using var reader = new StreamReader(stream, new UTF8Encoding(false));
+            return reader.ReadToEnd();
         }
     }
 }
