@@ -5,6 +5,7 @@ using DaoLang.Shared.Enums;
 using DaoLang.SourceGenerators.Components;
 using DaoLang.SourceGenerators.Utils;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace DaoLang.SourceGeneration
@@ -71,6 +72,15 @@ namespace DaoLang.SourceGeneration
                 var semanticModel = compilation.GetSemanticModel(typeDeclarationSyntax.SyntaxTree);
                 if (semanticModel.GetDeclaredSymbol(typeDeclarationSyntax) is not INamedTypeSymbol typeSymbol)
                 {
+                    continue;
+                }
+
+                if (!typeDeclarationSyntax.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(
+                        GeneratorDiagnostics.MainLanguageClassMustBePartial,
+                        typeDeclarationSyntax.Identifier.GetLocation(),
+                        typeDeclarationSyntax.Identifier.ValueText));
                     continue;
                 }
 

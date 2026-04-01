@@ -26,7 +26,7 @@ namespace DaoLang.Shared.Utils
 
         public static bool Load(string fileName, out Language language)
         {
-            language = default;
+            language = null;
 
             if (File.Exists(fileName))
             {
@@ -62,7 +62,7 @@ namespace DaoLang.Shared.Utils
 
         public static bool Load(Assembly assembly, string sourceName, out Language language)
         {
-            language = default;
+            language = null;
 
             try
             {
@@ -85,7 +85,7 @@ namespace DaoLang.Shared.Utils
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO 保存备份资源文件
             }

@@ -78,13 +78,12 @@ namespace DaoLang
             if (SecondaryLanguages?.Contains(language) == true)
             {
                 MainSource ??= PropertyToSource(MainLanguage);
-                LoadLanguageSource(language, callingAssembly);
+                return LoadLanguageSource(language, callingAssembly);
             }
             else
             {
-                LoadLanguageSource(MainLanguage, callingAssembly);
+                return LoadLanguageSource(MainLanguage, callingAssembly);
             }
-            return false;
         }
 
         /// <summary>

@@ -5,6 +5,7 @@ using DaoLang.SourceGeneration.Utils;
 using DaoLang.SourceGenerators.Components;
 using DaoLang.SourceGenerators.Utils;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -28,7 +29,7 @@ namespace DaoLang.SourceGeneration
                 context.CompilationProvider.Combine(typeDeclarations.Collect());
 
             context.RegisterSourceOutput(compilationAndTypes, static (spc, source) =>
-                Execute(source.Compilation, source.TypeDeclarationSyntaxes));
+                Execute(source.Compilation, source.TypeDeclarationSyntaxes, spc));
         }
 
         #region [Private Methods]
@@ -65,7 +66,8 @@ namespace DaoLang.SourceGeneration
         /// <param name="types"></param>
         private static void Execute(
             Compilation compilation,
-            ImmutableArray<TypeDeclarationSyntax> types)
+            ImmutableArray<TypeDeclarationSyntax> types,
+            SourceProductionContext context)
         {
             if (types.IsDefaultOrEmpty)
             {
@@ -112,15 +114,15 @@ namespace DaoLang.SourceGeneration
 
                 var info = new FileGenerationInfo()
                 {
-                    Directory = directory,
-                    FileFlag = fileFlag,
+                    Directory = directory ?? string.Empty,
+                    FileFlag = fileFlag ?? string.Empty,
                     MainLanguageType = type,
                     FileGenerationType = generationType,
                     CsprojFile = csprojFile,
                 };
 
                 // 字段内容更新
-                UpdateFields(typeDeclarationSyntax, typeSymbol, info);
+                UpdateFields(typeDeclarationSyntax, typeSymbol, semanticModel, info, context);
             }
         }
 
@@ -133,7 +135,9 @@ namespace DaoLang.SourceGeneration
         private static void UpdateFields(
             SyntaxNode typeDeclarationSyntax,
             INamespaceOrTypeSymbol typeSymbol,
-            FileGenerationInfo info)
+            SemanticModel semanticModel,
+            FileGenerationInfo info,
+            SourceProductionContext context)
         {
             var valueDic = new Dictionary<string, string>();
             var key = info.Directory + info.FileFlag;
@@ -152,12 +156,13 @@ namespace DaoLang.SourceGeneration
                                     {
                                         return false;
                                     }
-                                    var folder = ((LiteralExpressionSyntax)tmp.ArgumentList.Arguments[0].Expression)
-                                        .Token
-                                        .ValueText;
-                                    var flag = ((LiteralExpressionSyntax)tmp.ArgumentList.Arguments[1].Expression)
-                                        .Token
-                                        .ValueText;
+                                    if (tmp.ArgumentList.Arguments[0].Expression is not LiteralExpressionSyntax folderLiteral
+                                        || tmp.ArgumentList.Arguments[1].Expression is not LiteralExpressionSyntax flagLiteral)
+                                    {
+                                        return false;
+                                    }
+                                    var folder = folderLiteral.Token.ValueText;
+                                    var flag = flagLiteral.Token.ValueText;
                                     return (folder + flag).Equals(key);
                                 });
                             });
@@ -174,13 +179,15 @@ namespace DaoLang.SourceGeneration
                 {
                     continue;
                 }
-                var fieldName = field.Declaration.Variables[0].Identifier.ValueText;
-                var fieldValue = (field.Declaration.Variables[0].Initializer?.Value as LiteralExpressionSyntax)
-                    ?.Token
-                    .ValueText;
+
+                if (!TryGetEntryFieldValue(field, semanticModel, context, out var fieldName, out var fieldValue))
+                {
+                    continue;
+                }
+
                 if (!string.IsNullOrEmpty(fieldName)
                     && !valueDic.ContainsKey(fieldName)
-                    && fieldValue != null)
+                    && fieldValue is not null)
                 {
                     valueDic.Add(fieldName, fieldValue);
                 }
@@ -208,11 +215,16 @@ namespace DaoLang.SourceGeneration
             var sourceName = SourceReader.GetFileName(info.Directory, info.FileFlag, info.MainLanguageType);
             sources.Add(sourceName);
             var attributes = typeSymbol.GetAttributes();
+            var projectDirectory = Path.GetDirectoryName(info.CsprojFile);
+            if (string.IsNullOrEmpty(projectDirectory))
+            {
+                return;
+            }
 
             // 生成主语言文件
             GeneratorFile(
                 typeSymbol,
-                Path.Combine(Path.GetDirectoryName(info.CsprojFile), sourceName),
+                Path.Combine(projectDirectory, sourceName),
                 info.MainLanguageType,
                 fieldsValueDic,
                 true);
@@ -231,7 +243,7 @@ namespace DaoLang.SourceGeneration
                 sources.Add(sourceName);
                 GeneratorFile(
                     typeSymbol,
-                    Path.Combine(Path.GetDirectoryName(info.CsprojFile)!, sourceName),
+                    Path.Combine(projectDirectory, sourceName),
                     type);
             }
 
@@ -251,10 +263,10 @@ namespace DaoLang.SourceGeneration
             INamespaceOrTypeSymbol typeSymbol,
             string fileName,
             LanguageType type,
-            Dictionary<string, string> defalutValue = null,
+            Dictionary<string, string>? defalutValue = null,
             bool isMainLanguage = false)
         {
-            var isExistFile = SourceReader.Load(fileName, out Language existSource);
+            var isExistFile = SourceReader.Load(fileName, out Language? existSource);
             var result = new Language { IsMainLanguage = isMainLanguage, LanguageType = type };
 
             foreach (var field in typeSymbol.GetMembers().Where(t => t is { Kind: SymbolKind.Field }))
@@ -288,6 +300,86 @@ namespace DaoLang.SourceGeneration
             }
 
             SourceReader.Save(result, fileName);
+        }
+
+        private static bool TryGetEntryFieldValue(
+            FieldDeclarationSyntax field,
+            SemanticModel semanticModel,
+            SourceProductionContext context,
+            out string fieldName,
+            out string? fieldValue)
+        {
+            fieldName = string.Empty;
+            fieldValue = null;
+
+            if (field.Declaration.Variables.Count != 1)
+            {
+                if (HasEntryAttribute(field, semanticModel))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(
+                        GeneratorDiagnostics.EntryFieldMustBePrivateStaticString,
+                        field.Declaration.GetLocation(),
+                        field.Declaration.Variables.FirstOrDefault().Identifier.ValueText));
+                }
+                return false;
+            }
+
+            var variable = field.Declaration.Variables[0];
+            if (semanticModel.GetDeclaredSymbol(variable) is not IFieldSymbol fieldSymbol)
+            {
+                return false;
+            }
+
+            if (!HasEntryAttribute(fieldSymbol))
+            {
+                return false;
+            }
+
+            fieldName = variable.Identifier.ValueText;
+
+            if (!IsValidEntryField(fieldSymbol))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(
+                    GeneratorDiagnostics.EntryFieldMustBePrivateStaticString,
+                    field.Declaration.GetLocation(),
+                    fieldName));
+                return false;
+            }
+
+            if (variable.Initializer?.Value is not LiteralExpressionSyntax literal
+                || !literal.IsKind(SyntaxKind.StringLiteralExpression))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(
+                    GeneratorDiagnostics.EntryFieldMustUseStringLiteralInitializer,
+                    variable.GetLocation(),
+                    fieldName));
+                return false;
+            }
+
+            fieldValue = literal.Token.ValueText;
+            return true;
+        }
+
+        private static bool IsValidEntryField(IFieldSymbol fieldSymbol)
+        {
+            return fieldSymbol.DeclaredAccessibility == Accessibility.Private
+                && fieldSymbol.IsStatic
+                && fieldSymbol.Type.SpecialType == SpecialType.System_String;
+        }
+
+        private static bool HasEntryAttribute(FieldDeclarationSyntax field, SemanticModel semanticModel)
+        {
+            return field.AttributeLists
+                .SelectMany(t => t.Attributes)
+                .Any(attribute =>
+                    semanticModel.GetSymbolInfo(attribute).Symbol is IMethodSymbol attributeSymbol
+                    && SupportAttributes.EntryAttributeName.Equals(attributeSymbol.ContainingType.ToDisplayString()));
+        }
+
+        private static bool HasEntryAttribute(IFieldSymbol fieldSymbol)
+        {
+            return fieldSymbol.GetAttributes()
+                .Any(attribute => attribute.AttributeClass?.ToDisplayString().Equals(SupportAttributes.EntryAttributeName) == true);
         }
         #endregion
 

@@ -3,7 +3,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
 using DaoLang.SourceGenerators.Components;
 
@@ -137,10 +136,15 @@ namespace DaoLang.SourceGenerators
                 var entry = attributes.FirstOrDefault(t => t.AttributeClass?.ToDisplayString().Equals(SupportAttributes.EntryAttributeName) == true);
                 if (entry != null)
                 {
-                    var fieldType = ((IFieldSymbol)field).Type;
+                    if (field is not IFieldSymbol fieldSymbol || !IsValidEntryField(fieldSymbol))
+                    {
+                        continue;
+                    }
+
+                    var fieldType = fieldSymbol.Type;
                     namespaces.UseNamespace(usedTypes, typeSymbol, fieldType);
 
-                    var propertyName = GeneratorUtils.GetGeneratedPropertyName((IFieldSymbol)field);
+                    var propertyName = GeneratorUtils.GetGeneratedPropertyName(fieldSymbol);
                     var comment = entry.ConstructorArguments.FirstOrDefault().Value;
                     // 拼装内容
                     propertyEntrys.Add($@"
@@ -162,6 +166,13 @@ namespace DaoLang.SourceGenerators
             allPropertyEntrys = allPropertyEntrys.Substring(0, allPropertyEntrys.Length - 1);
             var compilationUnit = namespaceNames + CodePart.Enter + classBegin + allPropertyEntrys + classEnd;
             return compilationUnit;
+        }
+
+        private static bool IsValidEntryField(IFieldSymbol fieldSymbol)
+        {
+            return fieldSymbol.DeclaredAccessibility == Accessibility.Private
+                && fieldSymbol.IsStatic
+                && fieldSymbol.Type.SpecialType == SpecialType.System_String;
         }
         #endregion
     }

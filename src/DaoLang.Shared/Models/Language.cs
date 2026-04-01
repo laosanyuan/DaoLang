@@ -45,7 +45,7 @@ namespace DaoLang.Shared.Models
         {
             get
             {
-                if (index < 0 || index > Items.Count || Items is null)
+                if (Items is null || index < 0 || index >= Items.Count)
                 {
                     throw new ArgumentOutOfRangeException(nameof(index));
                 }
@@ -143,9 +143,9 @@ namespace DaoLang.Shared.Models
             Items?.ForEach(t =>
             {
                 // 当词条内容为空时使用备份语言词条内容作为替补
-                if (string.IsNullOrEmpty(t.Content) && backup != null)
+                if (string.IsNullOrEmpty(t.Content) && backup?.TryGetValue(t.Key, out var backupItem) == true)
                 {
-                    result.Add(t.Key, backup[t.Key].Content);
+                    result.Add(t.Key, backupItem.Content);
                 }
                 else
                 {
@@ -161,9 +161,9 @@ namespace DaoLang.Shared.Models
             Items?.ForEach(t =>
             {
                 // 当词条内容为空时使用备份语言词条内容作为替补
-                if (string.IsNullOrEmpty(t.Content) && backup != null)
+                if (string.IsNullOrEmpty(t.Content) && backup?.TryGetValue(t.Key, out var backupItem) == true)
                 {
-                    result.Add(t.Key, backup[t.Key].Content);
+                    result.Add(t.Key, backupItem.Content);
                 }
                 else
                 {
@@ -187,7 +187,7 @@ namespace DaoLang.Shared.Models
         /// 资源Key
         /// </summary>
         [XmlAttribute]
-        public string Key { get; set; }
+        public string Key { get; set; } = string.Empty;
 
         /// <summary>
         /// 内容
