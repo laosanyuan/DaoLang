@@ -73,7 +73,7 @@ namespace DaoLang.Shared.Models
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public LanguageItem this[string key]
+        public LanguageItem? this[string key]
             => ContainsKey(key)
                 ? this.Items.FirstOrDefault(t => t.Key.Equals(key))
                 : default;
@@ -90,7 +90,7 @@ namespace DaoLang.Shared.Models
         /// <param name="key"></param>
         /// <param name="entry"></param>
         /// <returns></returns>
-        public bool TryGetValue(string key, out LanguageItem entry)
+        public bool TryGetValue(string key, out LanguageItem? entry)
         {
             entry = default;
 
@@ -113,7 +113,7 @@ namespace DaoLang.Shared.Models
             return !string.IsNullOrEmpty(key) && Items.Any(t => t.Key.Equals(key));
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is Language target
                 && target.LanguageType == this.LanguageType
@@ -137,37 +137,37 @@ namespace DaoLang.Shared.Models
         public override int GetHashCode() => this.Items.GetHashCode() + this.LanguageType.GetHashCode() + this.IsMainLanguage.GetHashCode();
 
 #if WinUI3 || WPF || MAUI
-        public ResourceDictionary ConvertToResourceDictionary(Language backup = null)
+        public ResourceDictionary ConvertToResourceDictionary(Language? backup = null)
         {
             var result = new ResourceDictionary();
-            Items?.ForEach(t =>
+            Items.ForEach(t =>
             {
                 // 当词条内容为空时使用备份语言词条内容作为替补
-                if (string.IsNullOrEmpty(t.Content) && backup?.TryGetValue(t.Key, out var backupItem) == true)
+                if (string.IsNullOrEmpty(t.Content) && backup?.TryGetValue(t.Key, out var backupItem) == true && backupItem is not null)
                 {
                     result.Add(t.Key, backupItem.Content);
                 }
                 else
                 {
-                    result.Add(t.Key, t.Content);
+                    result.Add(t.Key, t.Content ?? string.Empty);
                 }
             });
             return result;
         }
 #elif Avalonia
-        public Dictionary<string, string> ConvertToDictionary(Language backup = null)
+        public Dictionary<string, string> ConvertToDictionary(Language? backup = null)
         {
             var result = new Dictionary<string, string>();
-            Items?.ForEach(t =>
+            Items.ForEach(t =>
             {
                 // 当词条内容为空时使用备份语言词条内容作为替补
-                if (string.IsNullOrEmpty(t.Content) && backup?.TryGetValue(t.Key, out var backupItem) == true)
+                if (string.IsNullOrEmpty(t.Content) && backup?.TryGetValue(t.Key, out var backupItem) == true && backupItem is not null)
                 {
                     result.Add(t.Key, backupItem.Content);
                 }
                 else
                 {
-                    result.Add(t.Key, t.Content);
+                    result.Add(t.Key, t.Content ?? string.Empty);
                 }
             });
             return result;

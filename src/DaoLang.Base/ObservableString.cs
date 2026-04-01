@@ -4,11 +4,11 @@ namespace DaoLang.Base
 {
     public class ObservableString : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public ObservableString(string value)
         {
-            this.Value = value;
+            _value = value;
         }
 
         private string _value;

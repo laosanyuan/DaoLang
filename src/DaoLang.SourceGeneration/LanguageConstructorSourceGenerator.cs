@@ -174,14 +174,14 @@ namespace DaoLang.SourceGeneration
         /// </summary>
         /// <param name="attributeData"></param>
         /// <returns></returns>
-        private static MainLanguageInfo ParseMainLanguageAttribute(AttributeData attributeData)
+        private static MainLanguageInfo? ParseMainLanguageAttribute(AttributeData attributeData)
         {
             if (attributeData.ConstructorArguments.Length >= 3)
             {
                 var info = new MainLanguageInfo
                 {
-                    Folder = attributeData.ConstructorArguments[0].Value?.ToString(),
-                    FileFlag = attributeData.ConstructorArguments[1].Value?.ToString(),
+                    Folder = attributeData.ConstructorArguments[0].Value?.ToString() ?? string.Empty,
+                    FileFlag = attributeData.ConstructorArguments[1].Value?.ToString() ?? string.Empty,
                     LanguageType = (LanguageType)(attributeData.ConstructorArguments[2].Value ?? 0)
                 };
                 if (attributeData.ConstructorArguments.Length > 3)
@@ -196,7 +196,7 @@ namespace DaoLang.SourceGeneration
                 return info;
             }
 
-            return default;
+            return null;
         }
 
         internal class MainLanguageInfo

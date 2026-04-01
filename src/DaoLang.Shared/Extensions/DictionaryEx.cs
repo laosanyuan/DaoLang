@@ -15,7 +15,7 @@ namespace DaoLang.Shared.Extensions
         /// <param name="target"></param>
         /// <returns></returns>
         public static bool IsSame<T1, T2>(this Dictionary<T1, T2> source, Dictionary<T1, T2> target)
-            where T1 : class
+            where T1 : notnull
             where T2 : class
         {
             if (source != null
@@ -41,6 +41,7 @@ namespace DaoLang.Shared.Extensions
         /// <param name="target"></param>
         /// <returns></returns>
         public static bool IsKeySame<T1, T2>(this Dictionary<T1, T2> source, Dictionary<T1, T2> target)
+            where T1 : notnull
             where T2 : class, IEquatable<T2>
         {
             if (source != null

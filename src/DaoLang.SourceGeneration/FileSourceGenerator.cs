@@ -64,7 +64,7 @@ namespace DaoLang.SourceGeneration
                 }
             }
 
-            return null;
+            return null!;
         }
 
         /// <summary>
@@ -307,9 +307,10 @@ namespace DaoLang.SourceGeneration
                 }
                 else
                 {
-                    if (isExistFile && existSource?[item.Key] is not null)
+                    var existingItem = existSource?[item.Key];
+                    if (isExistFile && existingItem is not null)
                     {
-                        item.Content = existSource[item.Key].Content;
+                        item.Content = existingItem.Content;
                     }
                 }
                 result.Add(item);
@@ -335,7 +336,7 @@ namespace DaoLang.SourceGeneration
                     context.ReportDiagnostic(Diagnostic.Create(
                         GeneratorDiagnostics.EntryFieldMustBePrivateStaticString,
                         field.Declaration.GetLocation(),
-                        field.Declaration.Variables.FirstOrDefault().Identifier.ValueText));
+                        field.Declaration.Variables.FirstOrDefault()?.Identifier.ValueText ?? "<unknown>"));
                 }
                 return false;
             }

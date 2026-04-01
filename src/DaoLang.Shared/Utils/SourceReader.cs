@@ -24,7 +24,7 @@ namespace DaoLang.Shared.Utils
             return Path.Combine(directory, $"{flag}.{language.GetCommonName()}.xml");
         }
 
-        public static bool Load(string fileName, out Language language)
+        public static bool Load(string fileName, out Language? language)
         {
             language = null;
 
@@ -60,7 +60,7 @@ namespace DaoLang.Shared.Utils
             return false;
         }
 
-        public static bool Load(Assembly assembly, string sourceName, out Language language)
+        public static bool Load(Assembly assembly, string sourceName, out Language? language)
         {
             language = null;
 
@@ -101,28 +101,27 @@ namespace DaoLang.Shared.Utils
             }
 
             var serializer = new XmlSerializer(typeof(Language));
-            using (var sw = new StringWriter())
+            using (var stream = new MemoryStream())
             {
-
-                using (var writer = new XmlTextWriter(sw))
+                using (var writer = XmlWriter.Create(stream, new XmlWriterSettings
                 {
-
-
-                    writer.Indentation = 2;
-                    writer.Formatting = Formatting.Indented;
+                    Encoding = new UTF8Encoding(false),
+                    Indent = true
+                }))
+                {
                     serializer.Serialize(writer, source);
-                    var xmlStr = sw.ToString();
+                    writer.Flush();
 
                     if (!File.Exists(filePath))
                     {
                         var path = Path.GetDirectoryName(filePath);
-                        if (!Directory.Exists(path))
+                        if (!string.IsNullOrEmpty(path) && !Directory.Exists(path))
                         {
                             Directory.CreateDirectory(path);
                         }
                     }
 
-                    File.WriteAllText(filePath, xmlStr, Encoding.UTF8);
+                    File.WriteAllBytes(filePath, stream.ToArray());
                 }
             }
         }
