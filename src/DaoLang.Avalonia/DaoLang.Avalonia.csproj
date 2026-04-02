@@ -19,6 +19,7 @@
     </Description>
     <PakageTags>Avalonia;dotnet;CSharp;Localization;Globalization</PakageTags>
     <PackageIcon>content\logo.png</PackageIcon>
+    <PackageReadmeFile>PACKAGE_README.md</PackageReadmeFile>
     <PackageOutputPath>..\..\bin</PackageOutputPath>
     <Version>1.0.1</Version>
     <RepositoryUrl>https://github.com/laosanyuan/DaoLang</RepositoryUrl>
@@ -40,5 +41,6 @@
     <None Include="..\DaoLang.SourceGeneration\bin\$(Configuration)\netstandard2.0\DaoLang.SourceGeneration.dll" PackagePath="analyzers\dotnet\roslyn4.0\cs" Pack="true" Visible="false" />
     <None Include="..\DaoLang.SourceGeneration\bin\$(Configuration)\netstandard2.0\DaoLang.SourceGeneration.dll" PackagePath="analyzers\dotnet\roslyn4.4\cs" Pack="true" Visible="false" />
     <None Include="..\..\images\logo.png" Package="content" Pack="true" Visible="false" />
+    <None Include="..\..\PACKAGE_README.md" Pack="true" PackagePath="\" Visible="false" />
   </ItemGroup>
 </Project>
