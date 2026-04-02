@@ -1,8 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net5.0;net6.0;net7.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net5.0;net6.0;net7.0;net8.0;net9.0;net10.0</TargetFrameworks>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -25,8 +27,6 @@
 
   <PropertyGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
     <DefineConstants>Avalonia</DefineConstants>
-    <EnableTrimAnalyzer>false</EnableTrimAnalyzer>
-    <IsTrimmable>true</IsTrimmable>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

@@ -2,23 +2,18 @@
   <PropertyGroup>
     <TargetFrameworks>
       netstandard2.0;
-      net6.0-windows10.0.17763.0;
-      net7.0-windows10.0.17763.0;
-      net6.0-windows10.0.18362.0;
-      net7.0-windows10.0.18362.0;
       net6.0-windows10.0.19041.0;
       net7.0-windows10.0.19041.0;
-      net6.0-windows10.0.20348.0;
-      net7.0-windows10.0.20348.0;
-      net6.0-windows10.0.22000.0;
-      net7.0-windows10.0.22000.0;
-      net6.0-windows10.0.22621.0;
-      net7.0-windows10.0.22621.0
+      net8.0-windows10.0.19041.0;
+      net9.0-windows10.0.19041.0;
+      net10.0-windows10.0.19041.0
     </TargetFrameworks>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>DaoLang.WinUI3</RootNamespace>
-    <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
     <UseWinUI>true</UseWinUI>
+    <WindowsPackageType>None</WindowsPackageType>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -41,13 +36,11 @@
 
   <PropertyGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
     <DefineConstants>WinUI3</DefineConstants>
-    <EnableTrimAnalyzer>false</EnableTrimAnalyzer>
-    <IsTrimmable>true</IsTrimmable>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221109.1" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.250907003" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4654" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net5.0-windows;net6.0-windows;net7.0-windows</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net5.0-windows;net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows;net10.0-windows</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <LangVersion>latest</LangVersion>
@@ -26,7 +26,7 @@
     <PackageProjectUrl>https://www.nuget.org/packages/DaoLang.WPF</PackageProjectUrl>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net5.0-windows' Or '$(TargetFramework)' == 'net6.0-windows' Or '$(TargetFramework)' == 'net7.0-windows'">
+  <PropertyGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
     <DefineConstants>WPF</DefineConstants>
   </PropertyGroup>
 
@@ -35,7 +35,7 @@
   </ItemGroup>
 
   <Import Project="..\DaoLang.Shared\DaoLang.Shared.projitems" Label="Shared" />
-  <Import Project="..\DaoLang.Base\DaoLang.Base.projitems" Label="Shared" Condition="'$(TargetFramework)' == 'net5.0-windows' Or '$(TargetFramework)' == 'net6.0-windows' Or '$(TargetFramework)' == 'net7.0-windows'" />
+  <Import Project="..\DaoLang.Base\DaoLang.Base.projitems" Label="Shared" Condition="'$(TargetFramework)' != 'netstandard2.0'" />
 
   <ItemGroup Label="Package">
     <None Include="..\DaoLang.SourceGeneration\bin\$(Configuration)\netstandard2.0\DaoLang.SourceGeneration.dll" PackagePath="analyzers\dotnet\roslyn4.0\cs" Pack="true" Visible="false" />
