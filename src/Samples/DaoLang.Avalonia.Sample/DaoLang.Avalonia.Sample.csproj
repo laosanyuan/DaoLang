@@ -56,4 +56,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <Target Name="DaoLangCleanupGeneratedResources" AfterTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
+    <ReadLinesFromFile File="$(MSBuildProjectDirectory)\obj\DaoLang.GeneratedResourceCleanup.txt" Condition="Exists('$(MSBuildProjectDirectory)\obj\DaoLang.GeneratedResourceCleanup.txt')">
+      <Output TaskParameter="Lines" ItemName="_DaoLangFilesToDelete" />
+    </ReadLinesFromFile>
+    <Delete Files="@(_DaoLangFilesToDelete)" Condition="'@(_DaoLangFilesToDelete)' != ''" ContinueOnError="WarnAndContinue" />
+    <Delete Files="$(MSBuildProjectDirectory)\obj\DaoLang.GeneratedResourceCleanup.txt" Condition="Exists('$(MSBuildProjectDirectory)\obj\DaoLang.GeneratedResourceCleanup.txt')" ContinueOnError="WarnAndContinue" />
+  </Target>
+  <Target Name="DaoLangCleanupGeneratedResourcesDesignTime" AfterTargets="CoreCompile" Condition="'$(DesignTimeBuild)' == 'true'">
+    <ReadLinesFromFile File="$(MSBuildProjectDirectory)\obj\DaoLang.GeneratedResourceCleanup.txt" Condition="Exists('$(MSBuildProjectDirectory)\obj\DaoLang.GeneratedResourceCleanup.txt')">
+      <Output TaskParameter="Lines" ItemName="_DaoLangFilesToDelete" />
+    </ReadLinesFromFile>
+    <Delete Files="@(_DaoLangFilesToDelete)" Condition="'@(_DaoLangFilesToDelete)' != ''" ContinueOnError="WarnAndContinue" />
+    <Delete Files="$(MSBuildProjectDirectory)\obj\DaoLang.GeneratedResourceCleanup.txt" Condition="Exists('$(MSBuildProjectDirectory)\obj\DaoLang.GeneratedResourceCleanup.txt')" ContinueOnError="WarnAndContinue" />
+  </Target>
 </Project>

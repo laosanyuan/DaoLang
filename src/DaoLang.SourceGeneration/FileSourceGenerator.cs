@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace DaoLang.SourceGeneration
 {
@@ -25,19 +26,11 @@ namespace DaoLang.SourceGeneration
                     static (ctx, _) => GetSemanticTargetForGeneration(ctx))
                 .Where(static m => m is not null)!;
 
-            var isDesignTimeBuildProvider = context.AnalyzerConfigOptionsProvider.Select(
-                static (optionsProvider, _) =>
-                    optionsProvider.GlobalOptions.TryGetValue("build_property.DesignTimeBuild", out var value)
-                    && bool.TryParse(value, out var isDesignTimeBuild)
-                    && isDesignTimeBuild);
-
             IncrementalValueProvider<(Compilation Compilation, ImmutableArray<TypeDeclarationSyntax> TypeDeclarationSyntaxes)> compilationAndTypes =
                 context.CompilationProvider.Combine(typeDeclarations.Collect());
 
-            var pipeline = compilationAndTypes.Combine(isDesignTimeBuildProvider);
-
-            context.RegisterSourceOutput(pipeline, static (spc, source) =>
-                Execute(source.Left.Compilation, source.Left.TypeDeclarationSyntaxes, source.Right, spc));
+            context.RegisterSourceOutput(compilationAndTypes, static (spc, source) =>
+                Execute(source.Compilation, source.TypeDeclarationSyntaxes, spc));
         }
 
         #region [Private Methods]
@@ -75,7 +68,6 @@ namespace DaoLang.SourceGeneration
         private static void Execute(
             Compilation compilation,
             ImmutableArray<TypeDeclarationSyntax> types,
-            bool isDesignTimeBuild,
             SourceProductionContext context)
         {
             if (types.IsDefaultOrEmpty)
@@ -131,7 +123,7 @@ namespace DaoLang.SourceGeneration
                 };
 
                 // 字段内容更新
-                UpdateFields(typeDeclarationSyntax, typeSymbol, semanticModel, info, isDesignTimeBuild, context);
+                UpdateFields(typeDeclarationSyntax, typeSymbol, semanticModel, info, context);
             }
         }
 
@@ -142,48 +134,15 @@ namespace DaoLang.SourceGeneration
         /// <param name="typeSymbol"></param>
         /// <param name="info"></param>
         private static void UpdateFields(
-            SyntaxNode typeDeclarationSyntax,
+            TypeDeclarationSyntax typeDeclarationSyntax,
             INamespaceOrTypeSymbol typeSymbol,
             SemanticModel semanticModel,
             FileGenerationInfo info,
-            bool isDesignTimeBuild,
             SourceProductionContext context)
         {
             var valueDic = new Dictionary<string, string>();
-            var key = info.Directory + info.FileFlag;
-            // 获取文件中的目标类，针对同一文件中存在多个类的情况
-            if (typeDeclarationSyntax.SyntaxTree.GetRoot().DescendantNodes()
-                    .FirstOrDefault(t =>
-                    {
-                        if (t is ClassDeclarationSyntax { AttributeLists.Count: > 0 } cds)
-                        {
-                            return cds.AttributeLists.Any(s =>
-                            {
-                                return s.Attributes.Any(tmp =>
-                                {
-                                    if (tmp.ArgumentList?.Arguments.Count != 3 &&
-                                        tmp.ArgumentList?.Arguments.Count != 4)
-                                    {
-                                        return false;
-                                    }
-                                    if (tmp.ArgumentList.Arguments[0].Expression is not LiteralExpressionSyntax folderLiteral
-                                        || tmp.ArgumentList.Arguments[1].Expression is not LiteralExpressionSyntax flagLiteral)
-                                    {
-                                        return false;
-                                    }
-                                    var folder = folderLiteral.Token.ValueText;
-                                    var flag = flagLiteral.Token.ValueText;
-                                    return (folder + flag).Equals(key);
-                                });
-                            });
-                        }
-                        return false;
-                    }) is not ClassDeclarationSyntax classNode)
-            {
-                return;
-            }
 
-            foreach (var member in classNode.Members)
+            foreach (var member in typeDeclarationSyntax.Members)
             {
                 if (member is not FieldDeclarationSyntax field)
                 {
@@ -204,7 +163,7 @@ namespace DaoLang.SourceGeneration
             }
 
             // 更新全部文件
-            UpdateLanguageFiles(typeSymbol, info, valueDic, isDesignTimeBuild);
+            UpdateLanguageFiles(typeSymbol, info, valueDic);
         }
 
         /// <summary>
@@ -219,14 +178,8 @@ namespace DaoLang.SourceGeneration
             INamespaceOrTypeSymbol typeSymbol,
             FileGenerationInfo info,
             Dictionary<string, string> fieldsValueDic,
-            bool isDesignTimeBuild,
             bool onlyUpdateMain = false)
         {
-            if (isDesignTimeBuild)
-            {
-                return;
-            }
-
             var sources = new List<string>();
             var sourceName = SourceReader.GetFileName(info.Directory, info.FileFlag, info.MainLanguageType);
             sources.Add(sourceName);
@@ -265,6 +218,7 @@ namespace DaoLang.SourceGeneration
 
             // 更新.csproj文件
             CsprojUtil.AddFileToOutput(info.CsprojFile, sources, info.FileGenerationType);
+            WriteStaleLanguageFilesManifest(projectDirectory, info, sources);
         }
 
         /// <summary>
@@ -273,13 +227,13 @@ namespace DaoLang.SourceGeneration
         /// <param name="typeSymbol">roslyn类信息</param>
         /// <param name="fileName">资源文件名称</param>
         /// <param name="type">语言类型</param>
-        /// <param name="defalutValue">主语言默认字段值</param>
+        /// <param name="defaultValues">主语言默认字段值</param>
         /// <param name="isMainLanguage">是否为主语言</param>
         private static void GeneratorFile(
             INamespaceOrTypeSymbol typeSymbol,
             string fileName,
             LanguageType type,
-            Dictionary<string, string>? defalutValue = null,
+            Dictionary<string, string>? defaultValues = null,
             bool isMainLanguage = false)
         {
             var isExistFile = SourceReader.Load(fileName, out Language? existSource);
@@ -301,7 +255,7 @@ namespace DaoLang.SourceGeneration
 
                 // 主语言使用字段默认值作为资源值
                 // 副语言如果文件已填充过资源则沿用，否则留空待填
-                if (defalutValue != null && defalutValue.TryGetValue(field.Name, out var value))
+                if (defaultValues != null && defaultValues.TryGetValue(field.Name, out var value))
                 {
                     item.Content = value;
                 }
@@ -317,6 +271,43 @@ namespace DaoLang.SourceGeneration
             }
 
             SourceReader.Save(result, fileName);
+        }
+
+        private static void WriteStaleLanguageFilesManifest(string projectDirectory, FileGenerationInfo info, IEnumerable<string> currentSources)
+        {
+            CsprojUtil.WriteCleanupManifest(projectDirectory, GetStaleLanguageFiles(projectDirectory, info, currentSources));
+        }
+
+        private static IEnumerable<string> GetStaleLanguageFiles(string projectDirectory, FileGenerationInfo info, IEnumerable<string> currentSources)
+        {
+            var sourceDirectory = Path.Combine(projectDirectory, info.Directory ?? string.Empty);
+            if (!Directory.Exists(sourceDirectory))
+            {
+                yield break;
+            }
+
+            var expectedFiles = new HashSet<string>(
+                currentSources.Select(source => Path.GetFullPath(Path.Combine(projectDirectory, source))),
+                System.StringComparer.OrdinalIgnoreCase);
+
+            var escapedFlag = Regex.Escape(info.FileFlag);
+            var pattern = new Regex($"^{escapedFlag}\\.[\\w]{{2}}([_-])[\\w]{{2}}\\.xml$", RegexOptions.IgnoreCase);
+
+            foreach (var file in Directory.EnumerateFiles(sourceDirectory, $"{info.FileFlag}.*.xml", SearchOption.TopDirectoryOnly))
+            {
+                var fullPath = Path.GetFullPath(file);
+                if (expectedFiles.Contains(fullPath))
+                {
+                    continue;
+                }
+
+                if (!pattern.IsMatch(Path.GetFileName(file)))
+                {
+                    continue;
+                }
+
+                yield return fullPath;
+            }
         }
 
         private static bool TryGetEntryFieldValue(

@@ -43,5 +43,22 @@ namespace DaoLang.SourceGenerators.Utils
                 }
             }
         }
+
+        public static string GetRelativePath(string relativeTo, string path)
+        {
+            var baseUri = new System.Uri(AppendDirectorySeparatorChar(relativeTo));
+            var targetUri = new System.Uri(path);
+            return System.Uri.UnescapeDataString(baseUri.MakeRelativeUri(targetUri).ToString().Replace('/', Path.DirectorySeparatorChar));
+        }
+
+        private static string AppendDirectorySeparatorChar(string path)
+        {
+            if (!path.EndsWith(Path.DirectorySeparatorChar.ToString()) && !path.EndsWith(Path.AltDirectorySeparatorChar.ToString()))
+            {
+                return path + Path.DirectorySeparatorChar;
+            }
+
+            return path;
+        }
     }
 }

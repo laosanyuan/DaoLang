@@ -22,7 +22,7 @@
     <PackageIcon>content\logo.png</PackageIcon>
     <PackageReadmeFile>PACKAGE_README.md</PackageReadmeFile>
     <PackageOutputPath>..\..\bin</PackageOutputPath>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <RepositoryUrl>https://github.com/laosanyuan/DaoLang</RepositoryUrl>
     <PackageProjectUrl>https://www.nuget.org/packages/DaoLang.WPF</PackageProjectUrl>
   </PropertyGroup>
