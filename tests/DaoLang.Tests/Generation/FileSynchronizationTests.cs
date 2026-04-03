@@ -43,7 +43,9 @@ namespace DaoLang.Tests.Generation
 
         private static (int ExitCode, string Output) BuildProject(string projectPath, string workingDirectory, string nugetConfigPath)
         {
-            var startInfo = new ProcessStartInfo("dotnet", $"build \"{projectPath}\" --configfile \"{nugetConfigPath}\" -nologo -v minimal -p:UseSharedCompilation=false")
+            var startInfo = new ProcessStartInfo(
+                "dotnet",
+                $"build \"{projectPath}\" --configfile \"{nugetConfigPath}\" --ignore-failed-sources -nologo -v minimal -p:UseSharedCompilation=false -p:RestoreIgnoreFailedSources=true -p:NuGetAudit=false")
             {
                 WorkingDirectory = workingDirectory,
                 RedirectStandardOutput = true,
